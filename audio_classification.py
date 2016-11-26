@@ -14,6 +14,7 @@ import tensorflow as tf
 # Import MNIST data
 # from tensorflow.examples.tutorials.mnist import input_data
 from audio_reader import *
+import sys
 
 # mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 
@@ -23,11 +24,12 @@ training_iters = 200000
 batch_size = 128
 display_step = 5
 validate_step = 5
-
+checkpoint_every = 400
 # Network Parameters
 n_input = 1000  # MNIST data input (img shape: 28*28)
 n_classes = 2  # MNIST total classes (0-9 digits)
 dropout = 0.75  # Dropout, probability to keep units
+logdir = './test'
 
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, n_input])
@@ -71,10 +73,42 @@ def conv_net(x, weights, biases, dropout):
     fc1 = tf.nn.relu(fc1)
     # Apply Dropout
     fc1 = tf.nn.dropout(fc1, dropout)
-    print(fc1)
     # Output, class prediction
     out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
     return out
+
+
+def save(saver, sess, logdir, step):
+    model_name = 'model.ckpt'
+    checkpoint_path = os.path.join(logdir, model_name)
+    print('Storing checkpoint to {} ...'.format(logdir), end="")
+    sys.stdout.flush()
+
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+
+    saver.save(sess, checkpoint_path, global_step=step)
+    print(' Done.')
+
+
+def load(saver, sess, logdir):
+    print("Trying to restore saved checkpoints from {} ...".format(logdir),
+          end="")
+
+    ckpt = tf.train.get_checkpoint_state(logdir)
+    if ckpt:
+        print("  Checkpoint found: {}".format(ckpt.model_checkpoint_path))
+        global_step = int(ckpt.model_checkpoint_path
+                          .split('/')[-1]
+                          .split('-')[-1])
+        print("  Global step was: {}".format(global_step))
+        print("  Restoring...", end="")
+        saver.restore(sess, ckpt.model_checkpoint_path)
+        print(" Done.")
+        return global_step
+    else:
+        print(" No checkpoint found.")
+        return None
 
 
 # Store layers weight & bias
@@ -84,15 +118,15 @@ weights = {
     # 5x5 conv, 32 inputs, 64 outputs
     'wc2': tf.Variable(tf.random_normal([10, 32, 64])),
     # fully connected, 7*7*64 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([1000 * 64, 1024])),
+    'wd1': tf.Variable(tf.random_normal([1000 * 64, 512])),
     # 1024 inputs, 10 outputs (class prediction)
-    'out': tf.Variable(tf.random_normal([1024, n_classes]))
+    'out': tf.Variable(tf.random_normal([512, n_classes]))
 }
 
 biases = {
     'bc1': tf.Variable(tf.random_normal([32])),
     'bc2': tf.Variable(tf.random_normal([64])),
-    'bd1': tf.Variable(tf.random_normal([1024])),
+    'bd1': tf.Variable(tf.random_normal([512])),
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
 
@@ -100,47 +134,66 @@ biases = {
 pred = conv_net(x, weights, biases, keep_prob)
 # Define loss and optimizer
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
+tf.scalar_summary('cost', cost)
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
 
 # Evaluate model
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-
+tf.scalar_summary('acc', accuracy)
+writer = tf.train.SummaryWriter('board')
+writer.add_graph(tf.get_default_graph())
+run_metadata = tf.RunMetadata()
+summaries = tf.merge_all_summaries()
 # Initializing the variables
 init = tf.initialize_all_variables()
 audio_reader = AudioReader()
 # Launch the graph
-with tf.Session() as sess:
+with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init)
     step = 1
     # Keep training until reach max iterations
+    saver = tf.train.Saver(var_list=tf.trainable_variables())
+    try:
+        step = load(saver, sess, logdir)
+        if step == None:
+            step = 1
+    except:
+        print("Something went wrong while restoring checkpoint. "
+              "We will terminate training to avoid accidentally overwriting "
+              "the previous model.")
+        raise
+
     while step < training_iters:
         audio_sample, audio_label = audio_reader.next_batch(batch_size)
-        #
-        # audio_sample_begin = 0
-        # while audio_sample_begin + n_input < len(audio_sample):
-        #     sample = audio_sample[audio_sample_begin:audio_sample_begin + n_input]
-        # Run optimization op (backprop)
-        sess.run(optimizer, feed_dict={x: audio_sample, y: audio_label,
-                                       keep_prob: dropout})
 
-        step += 1
+        summary, _ ,_= sess.run([summaries, optimizer, accuracy], feed_dict={x: audio_sample, y: audio_label,
+                                                                 keep_prob: dropout})
+        writer.add_summary(summary, step)
         if step % display_step == 0:
             # Calculate batch loss and accuracy
             # print(len(sample), len(label))
+            # print(sess.run(correct_pred, feed_dict={x: audio_sample, y: audio_label,
+            #                                         keep_prob: 1.}))
             loss, acc = sess.run([cost, accuracy], feed_dict={x: audio_sample,
                                                               y: audio_label,
                                                               keep_prob: 1.})
+
             print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
 
-        if step % validate_step == 0:
-            audio_sample, audio_label = audio_reader.next_batch(batch_size)
-            print("Testing Accuracy:",
-                  sess.run(accuracy, feed_dict={x: audio_sample,
-                                                y: audio_label,
-                                                keep_prob: 1.}))
+        # if step % validate_step == 0:
+        #     audio_sample, audio_label = audio_reader.next_batch(batch_size)
+        #     print("Testing Accuracy:",
+        #           sess.run(accuracy, feed_dict={x: audio_sample,
+        #                                         y: audio_label,
+        #                                         keep_prob: 1.}))
             # audio_sample_begin += n_input
             # step += 1
-    print("Optimization Finished!")
+        if step % checkpoint_every == 0:
+            save(saver, sess, logdir, step)
+        step += 1
+
+print("Optimization Finished!")

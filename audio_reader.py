@@ -41,7 +41,7 @@ class AudioReader:
         self.next_audio_sample()
 
     def next_audio_sample(self):
-        self.current_audio, is_vocal = self.audios[self.current_audio_index]
+        self.current_audio, is_vocal = self.audios[self.current_audio_index % len(self.audios)]
         self.current_audio_label = [0, 1] if is_vocal == 1 else [1, 0]
         self.current_audio_index += 1
         return self.current_audio, self.current_audio_label
@@ -59,10 +59,10 @@ class AudioReader:
             if len(batches_sample) < batch_size:
                 self.next_audio_sample()
                 self.current_audio_sample = 0
-            print("Current audio sample size:{}, now batches size:{}".format(len(self.current_audio),
-                                                                             len(batches_sample)))
+            # print("Current audio sample size:{}, now batches size:{}".format(len(self.current_audio),
+            #                                                                  len(batches_sample)))
 
-        print("Current Audio Complete {}/{}".format(self.current_audio_index, len(self.audios)))
+        # print("Current Audio Complete {}/{}".format(self.current_audio_index, len(self.audios)))
 
         return batches_sample, batches_label
 
