@@ -22,6 +22,7 @@ learning_rate = 0.001
 training_iters = 200000
 batch_size = 128
 display_step = 5
+validate_step = 5
 
 # Network Parameters
 n_input = 1000  # MNIST data input (img shape: 28*28)
@@ -115,8 +116,6 @@ with tf.Session() as sess:
     # Keep training until reach max iterations
     while step < training_iters:
         audio_sample, audio_label = audio_reader.next_batch(batch_size)
-        print(audio_label)
-
         #
         # audio_sample_begin = 0
         # while audio_sample_begin + n_input < len(audio_sample):
@@ -132,10 +131,16 @@ with tf.Session() as sess:
             loss, acc = sess.run([cost, accuracy], feed_dict={x: audio_sample,
                                                               y: audio_label,
                                                               keep_prob: 1.})
-            print("Iter " + str(step) + ", Minibatch Loss= " + \
+            print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-        # audio_sample_begin += n_input
-        # step += 1
-    print("Optimization Finished!")
 
+        if step % validate_step == 0:
+            audio_sample, audio_label = audio_reader.next_batch(batch_size)
+            print("Testing Accuracy:",
+                  sess.run(accuracy, feed_dict={x: audio_sample,
+                                                y: audio_label,
+                                                keep_prob: 1.}))
+            # audio_sample_begin += n_input
+            # step += 1
+    print("Optimization Finished!")

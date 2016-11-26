@@ -34,26 +34,36 @@ class AudioReader:
         self.audios = self.read_dir(vocal_audio_directory, self.sample_rate, is_vocal=True)
         self.audios.extend(self.read_dir(non_vocal_audio_directory, self.sample_rate))
         shuffle(self.audios)
+        self.current_audio = None
+        self.current_audio_label = None
         self.current_audio_index = 0
         self.current_audio_sample = 0
+        self.next_audio_sample()
 
     def next_audio_sample(self):
-        audio, label = self.audios[self.current_audio_index]
+        self.current_audio, is_vocal = self.audios[self.current_audio_index]
+        self.current_audio_label = [0, 1] if is_vocal == 1 else [1, 0]
         self.current_audio_index += 1
-        return audio, label
+        return self.current_audio, self.current_audio_label
 
     def next_batch(self, batch_size):
         batches_sample = []
         batches_label = []
         while len(batches_sample) < batch_size:
-            audio, is_vocal = self.next_audio_sample()
-            label = [0, 1] if is_vocal == 1 else [1, 0]
-            start = 0
-            while start + self.sample_size < len(audio) and len(batches_sample) < batch_size:
-                sample = audio[start:start+self.sample_size]
+            while self.current_audio_sample + self.sample_size < len(self.current_audio) and \
+                            len(batches_sample) < batch_size:
+                sample = self.current_audio[self.current_audio_sample:self.current_audio_sample + self.sample_size]
                 batches_sample.append(sample)
-                batches_label.append(label)
-                start += self.sample_size
+                batches_label.append(self.current_audio_label)
+                self.current_audio_sample += self.sample_size
+            if len(batches_sample) < batch_size:
+                self.next_audio_sample()
+                self.current_audio_sample = 0
+            print("Current audio sample size:{}, now batches size:{}".format(len(self.current_audio),
+                                                                             len(batches_sample)))
+
+        print("Current Audio Complete {}/{}".format(self.current_audio_index, len(self.audios)))
+
         return batches_sample, batches_label
 
     def read_dir(self, dir, sample_rate, is_vocal=False):
