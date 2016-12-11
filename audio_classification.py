@@ -21,12 +21,12 @@ import sys
 # Parameters
 learning_rate = 0.001
 training_iters = 200000
-batch_size = 128
+batch_size = 32
 display_step = 5
 validate_step = 5
 checkpoint_every = 400
 # Network Parameters
-n_input = 1000  # MNIST data input (img shape: 28*28)
+n_input = 8000  # MNIST data input (img shape: 28*28)
 n_classes = 2  # MNIST total classes (0-9 digits)
 dropout = 0.75  # Dropout, probability to keep units
 logdir = './test'
@@ -45,10 +45,12 @@ def conv1d(x, W, b, strides=1):
     return x
 
 
-def maxpool2d(x, k=2):
+def maxpool2d(x, channels, k=2):
     # MaxPool2D wrapper
-    return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],
-                          padding='SAME')
+    x = tf.reshape(x, shape=[batch_size, 1, -1, channels])
+    out = tf.nn.max_pool(x, ksize=[1, 1, k, 1], strides=[1, 1, k, 1],
+                         padding='SAME')
+    return tf.reshape(out, shape=[batch_size, -1, channels])
 
 
 # Create model
@@ -59,12 +61,12 @@ def conv_net(x, weights, biases, dropout):
     # Convolution Layer
     conv1 = conv1d(x, weights['wc1'], biases['bc1'])
     # Max Pooling (down-sampling)
-    # conv1 = maxpool2d(conv1, k=2)
+    conv1 = maxpool2d(conv1, weights['wc1'].get_shape().as_list()[-1], k=2)
 
     # Convolution Layer
     conv2 = conv1d(conv1, weights['wc2'], biases['bc2'])
     # Max Pooling (down-sampling)
-    # conv2 = maxpool2d(conv2, k=2)
+    conv2 = maxpool2d(conv2, weights['wc2'].get_shape().as_list()[-1], k=2)
 
     # Fully connected layer
     # Reshape conv2 output to fit fully connected layer input
@@ -114,11 +116,11 @@ def load(saver, sess, logdir):
 # Store layers weight & bias
 weights = {
     # 5 conv, 1 input, 32 outputs
-    'wc1': tf.Variable(tf.random_normal([10, 1, 32])),
+    'wc1': tf.Variable(tf.random_normal([200, 1, 32])),
     # 5x5 conv, 32 inputs, 64 outputs
-    'wc2': tf.Variable(tf.random_normal([10, 32, 64])),
+    'wc2': tf.Variable(tf.random_normal([200, 32, 64])),
     # fully connected, 7*7*64 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([1000 * 64, 512])),
+    'wd1': tf.Variable(tf.random_normal([int(n_input / 4) * 64, 512])),
     # 1024 inputs, 10 outputs (class prediction)
     'out': tf.Variable(tf.random_normal([512, n_classes]))
 }
@@ -133,10 +135,10 @@ biases = {
 # Construct model
 pred = conv_net(x, weights, biases, keep_prob)
 # Define loss and optimizer
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(pred, y)
+cost = tf.reduce_mean(cross_entropy)
 tf.scalar_summary('cost', cost)
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
-
 
 # Evaluate model
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
@@ -148,7 +150,7 @@ run_metadata = tf.RunMetadata()
 summaries = tf.merge_all_summaries()
 # Initializing the variables
 init = tf.initialize_all_variables()
-audio_reader = AudioReader()
+audio_reader = AudioReader(sample_size=n_input)
 # Launch the graph
 with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init)
@@ -168,28 +170,34 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     while step < training_iters:
         audio_sample, audio_label = audio_reader.next_batch(batch_size)
 
-        summary, _ ,_= sess.run([summaries, optimizer, accuracy], feed_dict={x: audio_sample, y: audio_label,
-                                                                 keep_prob: dropout})
+        summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={x: audio_sample, y: audio_label,
+                                                                              keep_prob: dropout})
         writer.add_summary(summary, step)
         if step % display_step == 0:
             # Calculate batch loss and accuracy
-            # print(len(sample), len(label))
             # print(sess.run(correct_pred, feed_dict={x: audio_sample, y: audio_label,
             #                                         keep_prob: 1.}))
             loss, acc = sess.run([cost, accuracy], feed_dict={x: audio_sample,
                                                               y: audio_label,
                                                               keep_prob: 1.})
 
+            if loss <= 0.00001:
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                print(audio_label)
+                print(sess.run(cross_entropy, feed_dict={x: audio_sample,
+                                                         y: audio_label,
+                                                         keep_prob: 1.}))
+
             print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
 
-        # if step % validate_step == 0:
-        #     audio_sample, audio_label = audio_reader.next_batch(batch_size)
-        #     print("Testing Accuracy:",
-        #           sess.run(accuracy, feed_dict={x: audio_sample,
-        #                                         y: audio_label,
-        #                                         keep_prob: 1.}))
+            # if step % validate_step == 0:
+            #     audio_sample, audio_label = audio_reader.next_batch(batch_size)
+            #     print("Testing Accuracy:",
+            #           sess.run(accuracy, feed_dict={x: audio_sample,
+            #                                         y: audio_label,
+            #                                         keep_prob: 1.}))
             # audio_sample_begin += n_input
             # step += 1
         if step % checkpoint_every == 0:

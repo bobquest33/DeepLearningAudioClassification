@@ -1,7 +1,8 @@
 import fnmatch
 import os
 from random import shuffle
-
+from time import sleep
+import numpy as np
 import librosa
 
 
@@ -19,6 +20,8 @@ def load_generic_audio(directory, sample_rate):
     audios = []
     for filename in files:
         audio, _ = librosa.load(filename, sr=sample_rate, mono=True)
+        audio = np.array(audio)
+        audio += 1
         audios.append(audio)
     return audios
 
