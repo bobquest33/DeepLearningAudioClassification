@@ -34,6 +34,7 @@ logdir = './test'
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, n_input])
 y = tf.placeholder(tf.float32, [None, n_classes])
+
 keep_prob = tf.placeholder(tf.float32)  # dropout (keep probability)
 
 
@@ -182,7 +183,6 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
                                                               keep_prob: 1.})
 
             if loss <= 0.00001:
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 print(audio_label)
                 print(sess.run(cross_entropy, feed_dict={x: audio_sample,
                                                          y: audio_label,

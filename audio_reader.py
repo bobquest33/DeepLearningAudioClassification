@@ -19,10 +19,11 @@ def load_generic_audio(directory, sample_rate):
     files = find_files(directory)
     audios = []
     for filename in files:
-        audio, _ = librosa.load(filename, sr=sample_rate, mono=True)
-        audio = np.array(audio)
-        audio += 1
-        audios.append(audio)
+        audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
+        mfcc_audio = librosa.feature.mfcc(audio, sr)
+        # print(len(audio))
+        mfcc_audio = np.array(mfcc_audio)
+        audios.append(mfcc_audio)
     return audios
 
 
