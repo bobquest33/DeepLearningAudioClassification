@@ -5,6 +5,8 @@ from time import sleep
 import numpy as np
 import librosa
 
+MFCC_N = 20
+
 
 def find_files(directory, pattern='*.wav'):
     '''Recursively finds all files matching the pattern.'''
@@ -21,8 +23,8 @@ def load_generic_audio(directory, sample_rate):
     for filename in files:
         audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
         mfcc_audio = librosa.feature.mfcc(audio, sr)
-        # print(len(audio))
         mfcc_audio = np.array(mfcc_audio)
+        mfcc_audio = np.transpose(mfcc_audio)
         audios.append(mfcc_audio)
     return audios
 
@@ -30,7 +32,7 @@ def load_generic_audio(directory, sample_rate):
 class AudioReader:
     def __init__(self,
                  sample_rate=16000,
-                 sample_size=1000,
+                 sample_size=20,
                  vocal_audio_directory='./vocal',
                  non_vocal_audio_directory='./non_vocal'):
         self.sample_rate = sample_rate
@@ -54,7 +56,8 @@ class AudioReader:
         batches_sample = []
         batches_label = []
         while len(batches_sample) < batch_size:
-            while self.current_audio_sample + self.sample_size < len(self.current_audio) and \
+
+            while self.current_audio_sample + self.sample_size < self.current_audio.shape[0] and \
                             len(batches_sample) < batch_size:
                 sample = self.current_audio[self.current_audio_sample:self.current_audio_sample + self.sample_size]
                 batches_sample.append(sample)
@@ -63,10 +66,20 @@ class AudioReader:
             if len(batches_sample) < batch_size:
                 self.next_audio_sample()
                 self.current_audio_sample = 0
-            # print("Current audio sample size:{}, now batches size:{}".format(len(self.current_audio),
-            #                                                                  len(batches_sample)))
+                # print("Current audio sample size:{}, now batches size:{}".format(len(self.current_audio),
+                #                                                                  len(batches_sample)))
 
         # print("Current Audio Complete {}/{}".format(self.current_audio_index, len(self.audios)))
+        print(batches_sample)
+        batches_sample = np.array(batches_sample)
+        batches_sample = batches_sample.reshape(batches_sample.shape[0],
+                                                batches_sample.shape[1] * batches_sample.shape[2])
+        print(batches_sample.shape)
+
+        test = batches_sample.reshape(-1, 20, 20)
+        print('-')
+        print(test)
+        sleep(1000)
 
         return batches_sample, batches_label
 

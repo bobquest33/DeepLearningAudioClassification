@@ -26,7 +26,8 @@ display_step = 5
 validate_step = 5
 checkpoint_every = 400
 # Network Parameters
-n_input = 8000  # MNIST data input (img shape: 28*28)
+n_input = 400  # MNIST data input (img shape: 28*28)
+sample_size = 20
 n_classes = 2  # MNIST total classes (0-9 digits)
 dropout = 0.75  # Dropout, probability to keep units
 logdir = './test'
@@ -151,7 +152,7 @@ run_metadata = tf.RunMetadata()
 summaries = tf.merge_all_summaries()
 # Initializing the variables
 init = tf.initialize_all_variables()
-audio_reader = AudioReader(sample_size=n_input)
+audio_reader = AudioReader(sample_size=sample_size)
 # Launch the graph
 with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init)
