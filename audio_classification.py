@@ -28,9 +28,10 @@ checkpoint_every = 400
 # Network Parameters
 n_input = 400  # MNIST data input (img shape: 28*28)
 sample_size = 20
+mfcc_n = 20
 n_classes = 2  # MNIST total classes (0-9 digits)
 dropout = 0.75  # Dropout, probability to keep units
-logdir = './test'
+logdir = './log'
 
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, n_input])
@@ -40,35 +41,33 @@ keep_prob = tf.placeholder(tf.float32)  # dropout (keep probability)
 
 
 # Create some wrappers for simplicity
-def conv1d(x, W, b, strides=1):
+def conv2d(x, W, b, strides=1):
     # Conv1D wrapper, with bias and relu activation
-    x = tf.nn.conv1d(x, W, stride=strides, padding='SAME')
+    x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
     x = tf.nn.bias_add(x, b)
     return x
 
 
-def maxpool2d(x, channels, k=2):
+def maxpool2d(x, k=2):
     # MaxPool2D wrapper
-    x = tf.reshape(x, shape=[batch_size, 1, -1, channels])
-    out = tf.nn.max_pool(x, ksize=[1, 1, k, 1], strides=[1, 1, k, 1],
-                         padding='SAME')
-    return tf.reshape(out, shape=[batch_size, -1, channels])
+    return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],
+                          padding='SAME')
 
 
 # Create model
 def conv_net(x, weights, biases, dropout):
     # Reshape input picture
-    x = tf.reshape(x, shape=[-1, n_input, 1])
+    x = tf.reshape(x, shape=[batch_size, sample_size, mfcc_n, 1])
 
     # Convolution Layer
-    conv1 = conv1d(x, weights['wc1'], biases['bc1'])
+    conv1 = conv2d(x, weights['wc1'], biases['bc1'])
     # Max Pooling (down-sampling)
-    conv1 = maxpool2d(conv1, weights['wc1'].get_shape().as_list()[-1], k=2)
+    conv1 = maxpool2d(conv1, k=2)
 
     # Convolution Layer
-    conv2 = conv1d(conv1, weights['wc2'], biases['bc2'])
+    conv2 = conv2d(conv1, weights['wc2'], biases['bc2'])
     # Max Pooling (down-sampling)
-    conv2 = maxpool2d(conv2, weights['wc2'].get_shape().as_list()[-1], k=2)
+    conv2 = maxpool2d(conv2, k=2)
 
     # Fully connected layer
     # Reshape conv2 output to fit fully connected layer input
@@ -118,11 +117,11 @@ def load(saver, sess, logdir):
 # Store layers weight & bias
 weights = {
     # 5 conv, 1 input, 32 outputs
-    'wc1': tf.Variable(tf.random_normal([200, 1, 32])),
+    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32])),
     # 5x5 conv, 32 inputs, 64 outputs
-    'wc2': tf.Variable(tf.random_normal([200, 32, 64])),
+    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64])),
     # fully connected, 7*7*64 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([int(n_input / 4) * 64, 512])),
+    'wd1': tf.Variable(tf.random_normal([int(sample_size / 4) * int(mfcc_n / 4) * 64, 512])),
     # 1024 inputs, 10 outputs (class prediction)
     'out': tf.Variable(tf.random_normal([512, n_classes]))
 }
@@ -152,7 +151,7 @@ run_metadata = tf.RunMetadata()
 summaries = tf.merge_all_summaries()
 # Initializing the variables
 init = tf.initialize_all_variables()
-audio_reader = AudioReader(sample_size=sample_size)
+audio_reader = AudioReader(sample_size=sample_size, batch_size=batch_size)
 # Launch the graph
 with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init)
@@ -170,8 +169,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
         raise
 
     while step < training_iters:
-        audio_sample, audio_label = audio_reader.next_batch(batch_size)
-
+        audio_sample, audio_label = audio_reader.next_batch()
         summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={x: audio_sample, y: audio_label,
                                                                               keep_prob: dropout})
         writer.add_summary(summary, step)

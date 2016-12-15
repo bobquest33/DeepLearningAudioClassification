@@ -44,7 +44,15 @@ class AudioReader:
         self.current_audio_label = None
         self.current_audio_index = 0
         self.current_audio_sample = 0
-        self.next_audio_sample()
+        self.samples = []
+        self.labels = []
+        self.numbers = []
+        self.tuples = []
+        self.current_batch_index = 0
+
+    '''
+    Dead code
+    '''
 
     def next_audio_sample(self):
         self.current_audio, is_vocal = self.audios[self.current_audio_index % len(self.audios)]
@@ -52,36 +60,34 @@ class AudioReader:
         self.current_audio_index += 1
         return self.current_audio, self.current_audio_label
 
+    def get_all_batches(self):
+        self.tuples = []
+        index = 1
+        for current_audio, is_vocal in self.audios:
+            current_audio_sample = 0
+            label = [0, 1] if is_vocal == 1 else [1, 0]
+            while current_audio_sample + self.sample_size < current_audio.shape[0]:
+                sample = current_audio[current_audio_sample:current_audio_sample + self.sample_size]
+                self.tuples.append((sample, label, index))
+                current_audio_sample += self.sample_size
+                index += 1
+
+    def shuffle_batches(self):
+        shuffle(self.tuples)
+        for sample, label, index in self.tuples:
+            self.samples.append(sample)
+            self.labels.append(label)
+            self.numbers.append(index)
+
     def next_batch(self, batch_size):
-        batches_sample = []
-        batches_label = []
-        while len(batches_sample) < batch_size:
-
-            while self.current_audio_sample + self.sample_size < self.current_audio.shape[0] and \
-                            len(batches_sample) < batch_size:
-                sample = self.current_audio[self.current_audio_sample:self.current_audio_sample + self.sample_size]
-                batches_sample.append(sample)
-                batches_label.append(self.current_audio_label)
-                self.current_audio_sample += self.sample_size
-            if len(batches_sample) < batch_size:
-                self.next_audio_sample()
-                self.current_audio_sample = 0
-                # print("Current audio sample size:{}, now batches size:{}".format(len(self.current_audio),
-                #                                                                  len(batches_sample)))
-
-        # print("Current Audio Complete {}/{}".format(self.current_audio_index, len(self.audios)))
-        print(batches_sample)
-        batches_sample = np.array(batches_sample)
-        batches_sample = batches_sample.reshape(batches_sample.shape[0],
-                                                batches_sample.shape[1] * batches_sample.shape[2])
-        print(batches_sample.shape)
-
-        test = batches_sample.reshape(-1, 20, 20)
-        print('-')
-        print(test)
-        sleep(1000)
-
-        return batches_sample, batches_label
+        if self.current_batch_index + batch_size > len(self.samples):
+            self.current_batch_index = 0
+        samples_batch = self.samples[self.current_batch_index:self.current_batch_index + batch_size]
+        labels_batch = self.labels[self.current_batch_index:self.current_batch_index + batch_size]
+        samples_batch = np.array(samples_batch)
+        samples_batch = samples_batch.reshape(samples_batch.shape[0], samples_batch.shape[1] * samples_batch.shape[2])
+        self.current_batch_index += batch_size
+        return samples_batch, labels_batch
 
     def read_dir(self, dir, sample_rate, is_vocal=False):
         audio_files = []
