@@ -74,6 +74,7 @@ class AudioReader:
 
     def shuffle_batches(self):
         shuffle(self.tuples)
+        print("total sample number is {}".format(len(self.tuples)))
         for sample, label, index in self.tuples:
             self.samples.append(sample)
             self.labels.append(label)
@@ -84,10 +85,12 @@ class AudioReader:
             self.current_batch_index = 0
         samples_batch = self.samples[self.current_batch_index:self.current_batch_index + batch_size]
         labels_batch = self.labels[self.current_batch_index:self.current_batch_index + batch_size]
+        numbers_batch = self.numbers[self.current_batch_index:self.current_batch_index + batch_size]
+
         samples_batch = np.array(samples_batch)
         samples_batch = samples_batch.reshape(samples_batch.shape[0], samples_batch.shape[1] * samples_batch.shape[2])
         self.current_batch_index += batch_size
-        return samples_batch, labels_batch
+        return samples_batch, labels_batch, numbers_batch
 
     def read_dir(self, dir, sample_rate, is_vocal=False):
         audio_files = []

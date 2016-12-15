@@ -21,7 +21,7 @@ import sys
 # Parameters
 learning_rate = 0.001
 training_iters = 200000
-batch_size = 32
+batch_size = 128
 display_step = 5
 validate_step = 5
 checkpoint_every = 400
@@ -151,7 +151,9 @@ run_metadata = tf.RunMetadata()
 summaries = tf.merge_all_summaries()
 # Initializing the variables
 init = tf.initialize_all_variables()
-audio_reader = AudioReader(sample_size=sample_size, batch_size=batch_size)
+audio_reader = AudioReader(sample_size=sample_size)
+audio_reader.get_all_batches()
+audio_reader.shuffle_batches()
 # Launch the graph
 with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init)
@@ -169,7 +171,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
         raise
 
     while step < training_iters:
-        audio_sample, audio_label = audio_reader.next_batch()
+        audio_sample, audio_label, _ = audio_reader.next_batch(batch_size)
         summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={x: audio_sample, y: audio_label,
                                                                               keep_prob: dropout})
         writer.add_summary(summary, step)
@@ -181,11 +183,6 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
                                                               y: audio_label,
                                                               keep_prob: 1.})
 
-            if loss <= 0.00001:
-                print(audio_label)
-                print(sess.run(cross_entropy, feed_dict={x: audio_sample,
-                                                         y: audio_label,
-                                                         keep_prob: 1.}))
 
             print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \

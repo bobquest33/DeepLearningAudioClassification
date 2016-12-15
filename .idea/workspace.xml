@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="388873c6-e6cb-4f1e-b7f1-40be301911cb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/test_audio_reader.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/DeepLearningAudioClassification.iml" afterPath="$PROJECT_DIR$/.idea/DeepLearningAudioClassification.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/audio_classification.py" afterPath="$PROJECT_DIR$/audio_classification.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/audio_reader.py" afterPath="$PROJECT_DIR$/audio_reader.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test_audio_reader.py" afterPath="$PROJECT_DIR$/test/test_audio_reader.py" />
     </list>
     <ignored path="DeepLearningAudioClassification.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -19,12 +17,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Nosetest_TestAudioReader_test_next_batch.coverage" NAME="Nosetest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481790599806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Nosetest_TestAudioReader_test_next_batch.coverage" NAME="Nosetest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481793815114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_get_all_batches.coverage" NAME="Unittest TestAudioReader.test_get_all_batches Coverage Results" MODIFIED="1481793621648" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$audio_classification.coverage" NAME="audio_classification Coverage Results" MODIFIED="1481397931724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_next_batch__1_.coverage" NAME="Unittest TestAudioReader.test_next_batch (1) Coverage Results" MODIFIED="1481788999232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
-    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_next_batch.coverage" NAME="Unittest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481791487469" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
-    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$audio_classification__1_.coverage" NAME="audio_classification (1) Coverage Results" MODIFIED="1481775584183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_next_batch.coverage" NAME="Unittest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481793903374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$audio_classification__1_.coverage" NAME="audio_classification (1) Coverage Results" MODIFIED="1481794126876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -45,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="audio_classification.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="audio_classification.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/audio_classification.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="179" column="39" selection-start-line="179" selection-start-column="39" selection-end-line="179" selection-end-column="39" />
+            <state relative-caret-position="-3704">
+              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding>
                 <element signature="e#268#305#0" expanded="true" />
               </folding>
@@ -60,8 +58,8 @@
       <file leaf-file-name="audio_reader.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/audio_reader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="67" column="40" selection-start-line="67" selection-start-column="40" selection-end-line="67" selection-end-column="40" />
+            <state relative-caret-position="390">
+              <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
                 <element signature="e#1691#1947#0" expanded="false" />
@@ -70,13 +68,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_audio_reader.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test_audio_reader.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+            <state relative-caret-position="252">
+              <caret line="26" column="55" selection-start-line="26" selection-start-column="55" selection-end-line="26" selection-end-column="55" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
+                <marker date="1481793907348" expanded="true" signature="142:263" ph="..." />
+                <marker date="1481793907348" expanded="true" signature="406:500" ph="..." />
               </folding>
             </state>
           </provider>
@@ -92,10 +92,10 @@
       <list>
         <option value="$PROJECT_DIR$/non_vocal/.gitignore" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/audio_classification.py" />
         <option value="$PROJECT_DIR$/test_audio_reader.py" />
-        <option value="$PROJECT_DIR$/audio_reader.py" />
         <option value="$PROJECT_DIR$/test/test_audio_reader.py" />
+        <option value="$PROJECT_DIR$/audio_reader.py" />
+        <option value="$PROJECT_DIR$/audio_classification.py" />
       </list>
     </option>
   </component>
@@ -223,7 +223,7 @@
       <recent name="$PROJECT_DIR$/test" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittest TestAudioReader.test_get_all_batches">
+  <component name="RunManager" selected="Python.audio_classification (1)">
     <configuration default="false" name="Nosetest TestAudioReader.test_next_batch" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -552,9 +552,9 @@
     </list>
     <recent_temporary>
       <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python tests.Unittest TestAudioReader.test_get_all_batches" />
-        <item index="1" class="java.lang.String" itemvalue="Python tests.Unittest TestAudioReader.test_next_batch" />
-        <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetest TestAudioReader.test_next_batch" />
+        <item index="0" class="java.lang.String" itemvalue="Python tests.Unittest TestAudioReader.test_next_batch" />
+        <item index="1" class="java.lang.String" itemvalue="Python tests.Nosetest TestAudioReader.test_next_batch" />
+        <item index="2" class="java.lang.String" itemvalue="Python tests.Unittest TestAudioReader.test_get_all_batches" />
         <item index="3" class="java.lang.String" itemvalue="Python tests.Unittest TestAudioReader.test_next_batch (1)" />
       </list>
     </recent_temporary>
@@ -573,20 +573,8 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 16h 59m 30s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 06m 14s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 06m 33s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 06m 45s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 06m 55s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
+    <history-entry file="Nosetest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 23m 35s.xml">
+      <configuration name="Nosetest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
     <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 15m 05s.xml">
       <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
@@ -602,6 +590,18 @@
     </history-entry>
     <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 20m 22s.xml">
       <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 23m 43s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 24m 01s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 24m 49s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 25m 04s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
@@ -1007,10 +1007,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="26" column="55" selection-start-line="26" selection-start-column="55" selection-end-line="26" selection-end-column="55" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+            <marker date="1481793907348" expanded="true" signature="142:263" ph="..." />
+            <marker date="1481793907348" expanded="true" signature="406:500" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/audio_reader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="67" column="40" selection-start-line="67" selection-start-column="40" selection-end-line="67" selection-end-column="40" />
+        <state relative-caret-position="390">
+          <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
             <element signature="e#1691#1947#0" expanded="false" />
@@ -1020,20 +1032,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/audio_classification.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="179" column="39" selection-start-line="179" selection-start-column="39" selection-end-line="179" selection-end-column="39" />
+        <state relative-caret-position="-3704">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding>
             <element signature="e#268#305#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
