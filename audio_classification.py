@@ -183,7 +183,6 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
                                                               y: audio_label,
                                                               keep_prob: 1.})
 
-
             print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
