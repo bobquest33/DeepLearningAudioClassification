@@ -21,9 +21,9 @@ import sys
 # Parameters
 learning_rate = 0.001
 training_iters = 200000
-batch_size = 128
+batch_size = 100
 display_step = 5
-validate_step = 5
+validate_step = 1
 checkpoint_every = 400
 # Network Parameters
 n_input = 400  # MNIST data input (img shape: 28*28)
@@ -154,6 +154,13 @@ init = tf.initialize_all_variables()
 audio_reader = AudioReader(sample_size=sample_size)
 audio_reader.get_all_batches()
 audio_reader.shuffle_batches()
+
+validate_audio_reader = AudioReader(sample_size=sample_size,
+                                    vocal_audio_directory='./validate_vocal',
+                                    non_vocal_audio_directory='./validate_no_vocal')
+validate_audio_reader.get_all_batches()
+validate_audio_reader.shuffle_batches()
+
 # Launch the graph
 with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init)
@@ -183,18 +190,16 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
                                                               y: audio_label,
                                                               keep_prob: 1.})
 
-            print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
-                  "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.5f}".format(acc))
+            # print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
+            #       "{:.6f}".format(loss) + ", Training Accuracy= " + \
+            #       "{:.5f}".format(acc))
 
-            # if step % validate_step == 0:
-            #     audio_sample, audio_label = audio_reader.next_batch(batch_size)
-            #     print("Testing Accuracy:",
-            #           sess.run(accuracy, feed_dict={x: audio_sample,
-            #                                         y: audio_label,
-            #                                         keep_prob: 1.}))
-            # audio_sample_begin += n_input
-            # step += 1
+        if step % validate_step == 0:
+            audio_sample, audio_label, _ = validate_audio_reader.next_batch(batch_size)
+            print("Testing Accuracy:",
+                  sess.run(accuracy, feed_dict={x: audio_sample,
+                                                y: audio_label,
+                                                keep_prob: 1.}))
         if step % checkpoint_every == 0:
             save(saver, sess, logdir, step)
         step += 1

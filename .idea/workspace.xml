@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="388873c6-e6cb-4f1e-b7f1-40be301911cb" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/audio_classification.py" afterPath="$PROJECT_DIR$/audio_classification.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test_audio_reader.py" afterPath="$PROJECT_DIR$/test/test_audio_reader.py" />
     </list>
     <ignored path="DeepLearningAudioClassification.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -15,12 +17,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Nosetest_TestAudioReader_test_next_batch.coverage" NAME="Nosetest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481793815114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Nosetest_TestAudioReader_test_next_batch.coverage" NAME="Nosetest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481880642623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_get_all_batches.coverage" NAME="Unittest TestAudioReader.test_get_all_batches Coverage Results" MODIFIED="1481793621648" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$audio_classification.coverage" NAME="audio_classification Coverage Results" MODIFIED="1481397931724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_next_batch__1_.coverage" NAME="Unittest TestAudioReader.test_next_batch (1) Coverage Results" MODIFIED="1481788999232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
-    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_next_batch.coverage" NAME="Unittest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481793903374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
-    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$audio_classification__1_.coverage" NAME="audio_classification (1) Coverage Results" MODIFIED="1481794126876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$Unittest_TestAudioReader_test_next_batch.coverage" NAME="Unittest TestAudioReader.test_next_batch Coverage Results" MODIFIED="1481880863949" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/DeepLearningAudioClassification$audio_classification__1_.coverage" NAME="audio_classification (1) Coverage Results" MODIFIED="1481880988300" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -30,57 +32,64 @@
     <favorites_list name="DeepLearningAudioClassification" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="23">
-              <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="audio_classification.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/audio_classification.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="173" column="58" selection-start-line="173" selection-start-column="58" selection-end-line="173" selection-end-column="58" />
-              <folding>
-                <element signature="e#268#305#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="audio_reader.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/audio_reader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-                <element signature="e#1691#1947#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test_audio_reader.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="26" column="55" selection-start-line="26" selection-start-column="55" selection-end-line="26" selection-end-column="55" />
-              <folding>
-                <element signature="e#0#29#0" expanded="true" />
-                <marker date="1481793907348" expanded="true" signature="142:263" ph="..." />
-                <marker date="1481793907348" expanded="true" signature="406:500" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5545706">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="audio_classification.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/audio_classification.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-1">
+                  <caret line="188" column="44" selection-start-line="188" selection-start-column="44" selection-end-line="188" selection-end-column="44" />
+                  <folding>
+                    <element signature="e#268#305#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="audio_classification.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/audio_classification.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="104">
+                  <caret line="181" column="22" selection-start-line="181" selection-start-column="22" selection-end-line="181" selection-end-column="22" />
+                  <folding>
+                    <element signature="e#268#305#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="audio_reader.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/audio_reader.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="261">
+                  <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#14#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="test_audio_reader.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="344">
+                  <caret line="49" column="26" selection-start-line="49" selection-start-column="26" selection-end-line="49" selection-end-column="26" />
+                  <folding>
+                    <element signature="e#0#29#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -91,9 +100,9 @@
         <option value="$PROJECT_DIR$/non_vocal/.gitignore" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/test_audio_reader.py" />
-        <option value="$PROJECT_DIR$/test/test_audio_reader.py" />
         <option value="$PROJECT_DIR$/audio_reader.py" />
         <option value="$PROJECT_DIR$/audio_classification.py" />
+        <option value="$PROJECT_DIR$/test/test_audio_reader.py" />
       </list>
     </option>
   </component>
@@ -136,74 +145,7 @@
     <panes>
       <pane id="Scratches" />
       <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vocal" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DeepLearningAudioClassification" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="non_vocal" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
+        <subPane />
       </pane>
       <pane id="Scope" />
     </panes>
@@ -215,6 +157,7 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="js-jscs-nodeInterpreter" value="/usr/bin/node" />
+    <property name="SearchEverywhereHistoryKey" value="testaudio&#9;FILE&#9;file:///home/red/Works/DeepLearningAudioClassification/test/test_audio_reader.py" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -560,6 +503,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="388873c6-e6cb-4f1e-b7f1-40be301911cb" name="Default" comment="" />
@@ -571,49 +517,49 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Nosetest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 23m 35s.xml">
+    <history-entry file="Nosetest_TestAudioReader_test_next_batch - 2016.12.16 at 17h 30m 42s.xml">
       <configuration name="Nosetest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 15m 05s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 17m 04s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 17m 15s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 19m 59s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_get_all_batches - 2016.12.15 at 17h 20m 22s.xml">
-      <configuration name="Unittest TestAudioReader.test_get_all_batches" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 23m 43s.xml">
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 14h 23m 05s.xml">
       <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 24m 01s.xml">
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 14h 24m 24s.xml">
       <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 24m 49s.xml">
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 14h 27m 28s.xml">
       <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.15 at 17h 25m 04s.xml">
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 14h 27m 36s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 15h 20m 48s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 16h 30m 13s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 17h 30m 53s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 17h 31m 19s.xml">
+      <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittest_TestAudioReader_test_next_batch - 2016.12.16 at 17h 35m 07s.xml">
       <configuration name="Unittest TestAudioReader.test_next_batch" configurationId="tests" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="1985" y="-4" width="1855" height="1084" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18116343" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12022161" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32842106" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3863158" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36210525" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -668,7 +614,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -705,7 +650,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -734,7 +678,6 @@
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -763,7 +706,6 @@
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -792,7 +734,6 @@
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -821,7 +762,6 @@
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -850,7 +790,6 @@
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -879,7 +818,6 @@
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -908,7 +846,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -937,7 +874,6 @@
           <caret line="26" column="8" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -966,21 +902,12 @@
           <caret line="26" column="8" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/non_vocal/_TestList.txt" />
     <entry file="file://$PROJECT_DIR$/non_vocal/.gitignore" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1005,33 +932,54 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
+    <entry file="file:///usr/local/lib/python3.4/dist-packages/matplotlib/image.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="26" column="55" selection-start-line="26" selection-start-column="55" selection-end-line="26" selection-end-column="55" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-            <marker date="1481793907348" expanded="true" signature="142:263" ph="..." />
-            <marker date="1481793907348" expanded="true" signature="406:500" ph="..." />
-          </folding>
+        <state relative-caret-position="183">
+          <caret line="452" column="0" selection-start-line="452" selection-start-column="0" selection-end-line="452" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.4/dist-packages/tensorflow/python/client/session.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="953" column="0" selection-start-line="953" selection-start-column="0" selection-end-line="953" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/audio_reader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
+        <state relative-caret-position="261">
+          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <element signature="e#1691#1947#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_audio_reader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="344">
+          <caret line="49" column="26" selection-start-line="49" selection-start-column="26" selection-end-line="49" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/audio_classification.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="173" column="58" selection-start-line="173" selection-start-column="58" selection-end-line="173" selection-end-column="58" />
+        <state relative-caret-position="-1">
+          <caret line="188" column="44" selection-start-line="188" selection-start-column="44" selection-end-line="188" selection-end-column="44" />
           <folding>
             <element signature="e#268#305#0" expanded="true" />
           </folding>
