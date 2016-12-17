@@ -20,7 +20,7 @@ import sys
 
 # Parameters
 learning_rate = 0.001
-training_iters = 200000
+training_iters = 400
 batch_size = 100
 display_step = 5
 validate_step = 1
@@ -138,18 +138,24 @@ pred = conv_net(x, weights, biases, keep_prob)
 # Define loss and optimizer
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(pred, y)
 cost = tf.reduce_mean(cross_entropy)
-tf.scalar_summary('cost', cost)
+cost_summary = tf.scalar_summary('cost', cost)
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 # Evaluate model
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-tf.scalar_summary('acc', accuracy)
+
+accuracy_summary = tf.scalar_summary('acc', accuracy)
+validation_summary = tf.scalar_summary('validate', accuracy)
+
 writer = tf.train.SummaryWriter('board')
+
 writer.add_graph(tf.get_default_graph())
 run_metadata = tf.RunMetadata()
 summaries = tf.merge_all_summaries()
+
 # Initializing the variables
+
 init = tf.initialize_all_variables()
 audio_reader = AudioReader(sample_size=sample_size)
 audio_reader.get_all_batches()
@@ -177,11 +183,13 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
               "the previous model.")
         raise
 
-    while step < training_iters:
+    while step <= training_iters:
         audio_sample, audio_label, _ = audio_reader.next_batch(batch_size)
-        summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={x: audio_sample, y: audio_label,
-                                                                              keep_prob: dropout})
+        summary, cost_summ, _, _ = sess.run([accuracy_summary, cost_summary, optimizer, accuracy],
+                                            feed_dict={x: audio_sample, y: audio_label,
+                                                       keep_prob: dropout})
         writer.add_summary(summary, step)
+        writer.add_summary(cost_summ, step)
         if step % display_step == 0:
             # Calculate batch loss and accuracy
             # print(sess.run(correct_pred, feed_dict={x: audio_sample, y: audio_label,
@@ -196,10 +204,11 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
 
         if step % validate_step == 0:
             audio_sample, audio_label, _ = validate_audio_reader.next_batch(batch_size)
-            print("Testing Accuracy:",
-                  sess.run(accuracy, feed_dict={x: audio_sample,
-                                                y: audio_label,
-                                                keep_prob: 1.}))
+            summary, validate_acc = sess.run([validation_summary, accuracy], feed_dict={x: audio_sample,
+                                                                                        y: audio_label,
+                                                                                        keep_prob: 1.})
+            writer.add_summary(summary, step)
+            print("Testing Accuracy:", validate_acc)
         if step % checkpoint_every == 0:
             save(saver, sess, logdir, step)
         step += 1
