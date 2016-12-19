@@ -135,6 +135,8 @@ biases = {
 
 # Construct model
 pred = conv_net(x, weights, biases, keep_prob)
+
+softmax = tf.nn.softmax(pred)
 # Define loss and optimizer
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(pred, y)
 cost = tf.reduce_mean(cross_entropy)
@@ -188,6 +190,11 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
         summary, cost_summ, _, _ = sess.run([accuracy_summary, cost_summary, optimizer, accuracy],
                                             feed_dict={x: audio_sample, y: audio_label,
                                                        keep_prob: dropout})
+        pred_res, softmax_res, cross_entropy_res = sess.run([pred, softmax, cross_entropy],
+                                                            feed_dict={x: audio_sample, y: audio_label,
+                                                                       keep_prob: dropout})
+        print(pred_res, softmax_res, cross_entropy_res)
+        sleep(1000)
         writer.add_summary(summary, step)
         writer.add_summary(cost_summ, step)
         if step % display_step == 0:
