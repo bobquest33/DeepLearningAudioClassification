@@ -163,7 +163,7 @@ audio_reader.shuffle_batches()
 
 validate_audio_reader = AudioReader(sample_size=sample_size,
                                     vocal_audio_directory='./validate_vocal',
-                                    non_vocal_audio_directory='./validate_no_vocal')
+                                    non_vocal_audio_directory='./validate_non_vocal')
 validate_audio_reader.get_all_batches()
 validate_audio_reader.shuffle_batches()
 
