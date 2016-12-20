@@ -25,7 +25,7 @@ class AudioClassification:
 
     def __init__(self):
         self.learning_rate = 0.001
-        self.training_iters = 200000
+        self.training_iters = 800000
         self.batch_size = 32
         self.display_step = 5
         self.validate_step = 5
@@ -50,7 +50,7 @@ class AudioClassification:
             # 5x5 conv, 32 inputs, 64 outputs
             'wc2': tf.Variable(tf.random_normal([200, 32, 32])),
             # fully connected, 7*7*64 inputs, 1024 outputs
-            'wd1': tf.Variable(tf.random_normal([int(self.n_input / 4/512) * 32, 100])),
+            'wd1': tf.Variable(tf.random_normal([32 * 32, 100])),
             'wd2': tf.Variable(tf.random_normal([100, 50])),
             # 1024 inputs, 10 outputs (class prediction)
             'out': tf.Variable(tf.random_normal([50, self.n_classes]))
@@ -100,17 +100,17 @@ class AudioClassification:
         conv2 = self.conv1d(conv1, weights['wc2'], biases['bc2'])
         # Max Pooling (down-sampling)
         conv2 = self.maxpool2d(conv2, weights['wc2'].get_shape().as_list()[-1], k=2)
-
         # Fully connected layer
         # Reshape conv2 output to fit fully connected layer input
         fc1 = tf.reshape(conv2, [-1, weights['wd1'].get_shape().as_list()[0]])
         fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
         fc1 = tf.nn.relu(fc1)
         # Apply Dropout
-
-        fc2 = tf.add(tf.matmul(fc1, weights['wd2']), biases['bd2'])
-
+        fc2 = tf.reshape(fc1, [-1, weights['wd2'].get_shape().as_list()[0]])
+        fc2 = tf.add(tf.matmul(fc2, weights['wd2']), biases['bd2'])
+        fc2 = tf.nn.relu(fc2)
         fc2 = tf.nn.dropout(fc2, dropout)
+
         # Output, class prediction
         out = tf.add(tf.matmul(fc2, weights['out']), biases['out'])
         return out
@@ -167,6 +167,8 @@ class AudioClassification:
         # Initializing the variables
         init = tf.initialize_all_variables()
         audio_reader = AudioReader(sample_size=self.n_input)
+        audio_reader.get_all_batches()
+        audio_reader.shuffle_batches()
         # Launch the graph
         with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             sess.run(init)
@@ -184,7 +186,14 @@ class AudioClassification:
                 raise
 
             while step < self.training_iters:
-                audio_sample, audio_label = audio_reader.next_batch(self.batch_size)
+
+                audio_sample, audio_label,_ = audio_reader.next_batch(self.batch_size)
+                print(audio_sample.shape)
+
+                # print(sess.run([pred], feed_dict={self.x: audio_sample, self.y: audio_label,
+                #                                   self.keep_prob: self.dropout})[0].shape)
+                sleep(1000)
+
 
                 summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={self.x: audio_sample, self.y: audio_label,
                                                                                       self.keep_prob: self.dropout})
