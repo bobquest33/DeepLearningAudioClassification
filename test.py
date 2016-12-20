@@ -1,11 +1,11 @@
 import tensorflow as tf
 
 # our NN's output
-logits = tf.constant([[106000, 260000, 305000], [1.0, 2.0, 3.0], [1.0, 2.0, 3.0]])
+logits = tf.constant([[106.0, 260.0, 305.0], [1.0, 2.0, 3.0], [1.0, 2.0, 3.0]])
 # step1:do softmax
 y = tf.nn.softmax(logits)
 # true label
-y_ = tf.constant([[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0]])
+y_ = tf.constant([[0.0,1.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0]])
 # step2:do cross_entropy
 cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
 # do cross_entropy just one step
