@@ -26,7 +26,7 @@ display_step = 5
 validate_step = 5
 checkpoint_every = 400
 # Network Parameters
-n_input = 8000  # MNIST data input (img shape: 28*28)
+n_input = 32000  # MNIST data input (img shape: 28*28)
 n_classes = 2  # MNIST total classes (0-9 digits)
 dropout = 0.75  # Dropout, probability to keep units
 logdir = './test'
@@ -58,10 +58,13 @@ def conv_net(x, weights, biases, dropout):
     # Reshape input picture
     x = tf.reshape(x, shape=[-1, n_input, 1])
 
+    # Strided Layer
+    stride_conv = conv1d(x, weights['wc1'], biases['bc1'], strides=512)
+
     # Convolution Layer
-    conv1 = conv1d(x, weights['wc1'], biases['bc1'])
+    conv1 = conv1d(stride_conv, weights['wc1'], biases['bc1'])
     # Max Pooling (down-sampling)
-    conv1 = maxpool2d(conv1, weights['wc1'].get_shape().as_list()[-1], k=2)
+    conv1 = maxpool2d(conv1, weights['wc2'].get_shape().as_list()[-1], k=2)
 
     # Convolution Layer
     conv2 = conv1d(conv1, weights['wc2'], biases['bc2'])
@@ -116,6 +119,8 @@ def load(saver, sess, logdir):
 # Store layers weight & bias
 weights = {
     # 5 conv, 1 input, 32 outputs
+    'st1': tf.Variable(tf.random_normal([1024, 1, 32])),
+
     'wc1': tf.Variable(tf.random_normal([200, 1, 32])),
     # 5x5 conv, 32 inputs, 64 outputs
     'wc2': tf.Variable(tf.random_normal([200, 32, 64])),
@@ -126,6 +131,7 @@ weights = {
 }
 
 biases = {
+    'st1': tf.Variable(tf.random_normal([32])),
     'bc1': tf.Variable(tf.random_normal([32])),
     'bc2': tf.Variable(tf.random_normal([64])),
     'bd1': tf.Variable(tf.random_normal([512])),
