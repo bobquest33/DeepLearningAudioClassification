@@ -48,15 +48,6 @@ class AudioReader:
         self.current_batch_index = 0
         self.roll = False
 
-    '''
-    Dead code
-    '''
-
-    def next_audio_sample(self):
-        self.current_audio, is_vocal = self.audios[self.current_audio_index % len(self.audios)]
-        self.current_audio_label = [0, 1] if is_vocal == 1 else [1, 0]
-        self.current_audio_index += 1
-        return self.current_audio, self.current_audio_label
 
     def get_all_batches(self):
         self.tuples = []

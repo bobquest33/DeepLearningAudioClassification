@@ -20,6 +20,8 @@ import sys
 # mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 
 # Parameters
+from wrong_audio_reader import WrongAudioReader
+
 
 class AudioClassification:
 
@@ -166,9 +168,11 @@ class AudioClassification:
         summaries = tf.merge_all_summaries()
         # Initializing the variables
         init = tf.initialize_all_variables()
-        audio_reader = AudioReader(sample_size=self.n_input)
-        audio_reader.get_all_batches()
-        audio_reader.tied_batches(is_shuffle=False)
+        # audio_reader = AudioReader(sample_size=self.n_input)
+        # audio_reader.get_all_batches()
+        # audio_reader.tied_batches(is_shuffle=False)
+        audio_reader = WrongAudioReader(sample_size=self.n_input)
+        # audio_reader.get_all(20)
         # Launch the graph
         with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             sess.run(init)
@@ -187,8 +191,7 @@ class AudioClassification:
 
             while step < self.training_iters:
 
-                audio_sample, audio_label,_ = audio_reader.next_batch(self.batch_size)
-                # print(audio_sample.shape)
+                audio_sample, audio_label = audio_reader.next_batch(self.batch_size)
 
                 # print(sess.run([pred], feed_dict={self.x: audio_sample, self.y: audio_label,
                 #                                   self.keep_prob: self.dropout})[0].shape)
@@ -205,13 +208,6 @@ class AudioClassification:
                     loss, acc = sess.run([cost, accuracy], feed_dict={self.x: audio_sample,
                                                                       self.y: audio_label,
                                                                       self.keep_prob: 1.})
-
-                    if loss <= 0.00001:
-                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                        print(audio_label)
-                        print(sess.run(cross_entropy, feed_dict={self.x: audio_sample,
-                                                                 self.y: audio_label,
-                                                                 self.keep_prob: 1.}))
 
                     print("Iter " + str(step * self.batch_size) + ", Minibatch Loss= " + \
                           "{:.6f}".format(loss) + ", Training Accuracy= " + \
