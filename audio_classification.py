@@ -34,7 +34,7 @@ class AudioClassification:
         self.n_input = 32000  # MNIST data input (img shape: 28*28)
         self.n_classes = 2  # MNIST total classes (0-9 digits)
         self.dropout = 0.75  # Dropout, probability to keep units
-        self.logdir = './test'
+        self.logdir = './log'
 
         # tf Graph input
         self.x = tf.placeholder(tf.float32, [None, self.n_input])
@@ -168,7 +168,7 @@ class AudioClassification:
         init = tf.initialize_all_variables()
         audio_reader = AudioReader(sample_size=self.n_input)
         audio_reader.get_all_batches()
-        audio_reader.shuffle_batches()
+        audio_reader.tied_batches(is_shuffle=False)
         # Launch the graph
         with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             sess.run(init)
@@ -188,11 +188,11 @@ class AudioClassification:
             while step < self.training_iters:
 
                 audio_sample, audio_label,_ = audio_reader.next_batch(self.batch_size)
-                print(audio_sample.shape)
+                # print(audio_sample.shape)
 
                 # print(sess.run([pred], feed_dict={self.x: audio_sample, self.y: audio_label,
                 #                                   self.keep_prob: self.dropout})[0].shape)
-                sleep(1000)
+                # sleep(1000)
 
 
                 summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={self.x: audio_sample, self.y: audio_label,

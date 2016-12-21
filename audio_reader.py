@@ -46,6 +46,7 @@ class AudioReader:
         self.numbers = []
         self.tuples = []
         self.current_batch_index = 0
+        self.roll = False
 
     '''
     Dead code
@@ -69,17 +70,22 @@ class AudioReader:
                 current_audio_sample += self.sample_size
                 index += 1
 
-    def shuffle_batches(self):
-        shuffle(self.tuples)
+    def tied_batches(self, is_shuffle=True):
+        if is_shuffle:
+            shuffle(self.tuples)
         print("total sample number is {}".format(len(self.tuples)))
         for sample, label, index in self.tuples:
             self.samples.append(sample)
             self.labels.append(label)
             self.numbers.append(index)
 
+    def batch_is_rolling_back(self):
+        return self.roll
+
     def next_batch(self, batch_size):
         if self.current_batch_index + batch_size > len(self.samples):
             self.current_batch_index = 0
+            self.roll = True
         samples_batch = self.samples[self.current_batch_index:self.current_batch_index + batch_size]
         labels_batch = self.labels[self.current_batch_index:self.current_batch_index + batch_size]
         numbers_batch = self.numbers[self.current_batch_index:self.current_batch_index + batch_size]
