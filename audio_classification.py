@@ -10,12 +10,13 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 from __future__ import print_function
 
 import tensorflow as tf
+import numpy
 
+numpy.set_printoptions(threshold=numpy.nan)
 # Import MNIST data
 # from tensorflow.examples.tutorials.mnist import input_data
 from audio_reader import *
 import sys
-
 
 # mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 
@@ -24,13 +25,13 @@ from wrong_audio_reader import WrongAudioReader
 
 
 class AudioClassification:
-
     def __init__(self):
         self.learning_rate = 0.001
         self.training_iters = 800000
-        self.batch_size = 32
+        self.batch_size = 48
         self.display_step = 5
         self.validate_step = 5
+        self.test_step = 5
         self.checkpoint_every = 400
         # Network Parameters
         self.n_input = 32000  # MNIST data input (img shape: 28*28)
@@ -66,10 +67,6 @@ class AudioClassification:
             'bd2': tf.Variable(tf.random_normal([50])),
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
-
-    def setUp(self):
-        pass
-
 
     # Create some wrappers for simplicity
     def conv1d(self, x, W, b, strides=1):
@@ -168,10 +165,16 @@ class AudioClassification:
         summaries = tf.merge_all_summaries()
         # Initializing the variables
         init = tf.initialize_all_variables()
-        # audio_reader = AudioReader(sample_size=self.n_input)
-        # audio_reader.get_all_batches()
-        # audio_reader.tied_batches(is_shuffle=False)
-        audio_reader = WrongAudioReader(sample_size=self.n_input)
+        audio_reader = AudioReader(sample_size=self.n_input)
+        audio_reader.get_all_batches()
+        audio_reader.tied_batches()
+
+        test_audio_reader = AudioReader(sample_size=self.n_input,
+                                        vocal_audio_directory='./test_data/vocal',
+                                        non_vocal_audio_directory='./test_data/non_vocal')
+        test_audio_reader.get_all_batches()
+        test_audio_reader.tied_batches()
+        # audio_reader = WrongAudioReader(sample_size=self.n_input)
         # audio_reader.get_all(20)
         # Launch the graph
         with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
@@ -191,15 +194,16 @@ class AudioClassification:
 
             while step < self.training_iters:
 
-                audio_sample, audio_label = audio_reader.next_batch(self.batch_size)
+                audio_sample, audio_label, _ = audio_reader.next_batch(self.batch_size)
 
                 # print(sess.run([pred], feed_dict={self.x: audio_sample, self.y: audio_label,
                 #                                   self.keep_prob: self.dropout})[0].shape)
+                # print(audio_sample[0])
                 # sleep(1000)
+                summary, _, _ = sess.run([summaries, optimizer, accuracy],
+                                         feed_dict={self.x: audio_sample, self.y: audio_label,
+                                                    self.keep_prob: self.dropout})
 
-
-                summary, _, _ = sess.run([summaries, optimizer, accuracy], feed_dict={self.x: audio_sample, self.y: audio_label,
-                                                                                      self.keep_prob: self.dropout})
                 writer.add_summary(summary, step)
                 if step % self.display_step == 0:
                     # Calculate batch loss and accuracy
@@ -213,17 +217,28 @@ class AudioClassification:
                           "{:.6f}".format(loss) + ", Training Accuracy= " + \
                           "{:.5f}".format(acc))
 
-                    # if step % validate_step == 0:
-                    #     audio_sample, audio_label = audio_reader.next_batch(batch_size)
-                    #     print("Testing Accuracy:",
-                    #           sess.run(accuracy, feed_dict={x: audio_sample,
-                    #                                         y: audio_label,
-                    #                                         keep_prob: 1.}))
+                if step % self.validate_step == 0:
+                    audio_sample, audio_label, _ = audio_reader.pick_random(self.batch_size)
+                    print("Validation Accuracy:",
+                          sess.run(accuracy, feed_dict={self.x: audio_sample,
+                                                        self.y: audio_label,
+                                                        self.keep_prob: 1.}))
+                    # audio_sample_begin += n_input
+                    # step += 1
+
+                if step % self.test_step == 0:
+                    audio_sample, audio_label, _ = test_audio_reader.pick_random(self.batch_size)
+                    print("Testing Accuracy:",
+                          sess.run(accuracy, feed_dict={self.x: audio_sample,
+                                                        self.y: audio_label,
+                                                        self.keep_prob: 1.}))
                     # audio_sample_begin += n_input
                     # step += 1
                 if step % self.checkpoint_every == 0:
                     self.save(saver, sess, self.logdir, step)
                 step += 1
+
+
 
         print("Optimization Finished!")
 

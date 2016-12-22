@@ -1,9 +1,10 @@
 import fnmatch
 import os
-from random import shuffle
+from random import shuffle, random
 from time import sleep
 import numpy as np
 import librosa
+import random
 
 MFCC_N = 20
 
@@ -48,7 +49,6 @@ class AudioReader:
         self.current_batch_index = 0
         self.roll = False
 
-
     def get_all_batches(self):
         self.tuples = []
         index = 1
@@ -83,6 +83,13 @@ class AudioReader:
 
         samples_batch = np.array(samples_batch)
         self.current_batch_index += batch_size
+        return samples_batch, labels_batch, numbers_batch
+
+    def pick_random(self, pick_nums):
+        random_list = random.sample(list(np.arange(len(self.samples))), pick_nums)
+        samples_batch = np.array([self.samples[random_num] for random_num in random_list])
+        labels_batch = np.array([self.labels[random_num] for random_num in random_list])
+        numbers_batch = np.array([self.numbers[random_num] for random_num in random_list])
         return samples_batch, labels_batch, numbers_batch
 
     def read_dir(self, dir, sample_rate, is_vocal=False):

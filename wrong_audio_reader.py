@@ -21,7 +21,8 @@ def load_generic_audio(directory, sample_rate):
     for filename in files:
         audio, _ = librosa.load(filename, sr=sample_rate, mono=True)
         audio = np.array(audio)
-        # audio += 1
+        # audio *= 10
+        # audio -=10
         audios.append(audio)
     return audios
 
@@ -36,7 +37,7 @@ class WrongAudioReader:
         self.sample_size = sample_size
         self.audios = self.read_dir(vocal_audio_directory, self.sample_rate, is_vocal=True)
         self.audios.extend(self.read_dir(non_vocal_audio_directory, self.sample_rate))
-        shuffle(self.audios)
+        # shuffle(self.audios)
         self.current_audio = None
         self.current_audio_label = None
         self.current_audio_index = 0
