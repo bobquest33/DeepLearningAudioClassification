@@ -34,7 +34,7 @@ class AudioClassification:
         self.test_step = 5
         self.checkpoint_every = 400
         # Network Parameters
-        self.n_input = 32000  # MNIST data input (img shape: 28*28)
+        self.n_input = 48000  # MNIST data input (img shape: 28*28)
         self.n_classes = 2  # MNIST total classes (0-9 digits)
         self.dropout = 0.75  # Dropout, probability to keep units
         self.logdir = './log'
@@ -47,22 +47,22 @@ class AudioClassification:
         # Store layers weight & bias
         self.weights = {
             # 5 conv, 1 input, 32 outputs
-            'st1': tf.Variable(tf.random_normal([1024, 1, 32])),
+            'st1': tf.Variable(tf.random_normal([512, 1, 128])),
 
-            'wc1': tf.Variable(tf.random_normal([200, 32, 32])),
+            'wc1': tf.Variable(tf.random_normal([128, 128, 128])),
             # 5x5 conv, 32 inputs, 64 outputs
-            'wc2': tf.Variable(tf.random_normal([200, 32, 32])),
+            'wc2': tf.Variable(tf.random_normal([128, 128, 128])),
             # fully connected, 7*7*64 inputs, 1024 outputs
-            'wd1': tf.Variable(tf.random_normal([32 * 32, 100])),
+            'wd1': tf.Variable(tf.random_normal([47 * 128, 100])),
             'wd2': tf.Variable(tf.random_normal([100, 50])),
             # 1024 inputs, 10 outputs (class prediction)
             'out': tf.Variable(tf.random_normal([50, self.n_classes]))
         }
 
         self.biases = {
-            'st1': tf.Variable(tf.random_normal([32])),
-            'bc1': tf.Variable(tf.random_normal([32])),
-            'bc2': tf.Variable(tf.random_normal([32])),
+            'st1': tf.Variable(tf.random_normal([128])),
+            'bc1': tf.Variable(tf.random_normal([128])),
+            'bc2': tf.Variable(tf.random_normal([128])),
             'bd1': tf.Variable(tf.random_normal([100])),
             'bd2': tf.Variable(tf.random_normal([50])),
             'out': tf.Variable(tf.random_normal([self.n_classes]))
@@ -73,9 +73,9 @@ class AudioClassification:
         # Conv1D wrapper, with bias and relu activation
         x = tf.nn.conv1d(x, W, stride=strides, padding='SAME')
         x = tf.nn.bias_add(x, b)
-        return x
+        return tf.nn.relu(x)
 
-    def maxpool2d(self, x, channels, k=4):
+    def maxpool2d(self, x, channels, k=2):
         # MaxPool2D wrapper
         x = tf.reshape(x, shape=[self.batch_size, 1, -1, channels])
         out = tf.nn.max_pool(x, ksize=[1, 1, k, 1], strides=[1, 1, k, 1],
@@ -93,12 +93,12 @@ class AudioClassification:
         # Convolution Layer
         conv1 = self.conv1d(stride_conv, weights['wc1'], biases['bc1'])
         # Max Pooling (down-sampling)
-        conv1 = self.maxpool2d(conv1, weights['wc2'].get_shape().as_list()[-1], k=2)
+        conv1 = self.maxpool2d(conv1, weights['wc2'].get_shape().as_list()[-1])
 
         # Convolution Layer
         conv2 = self.conv1d(conv1, weights['wc2'], biases['bc2'])
         # Max Pooling (down-sampling)
-        conv2 = self.maxpool2d(conv2, weights['wc2'].get_shape().as_list()[-1], k=2)
+        conv2 = self.maxpool2d(conv2, weights['wc2'].get_shape().as_list()[-1])
         # Fully connected layer
         # Reshape conv2 output to fit fully connected layer input
         fc1 = tf.reshape(conv2, [-1, weights['wd1'].get_shape().as_list()[0]])
