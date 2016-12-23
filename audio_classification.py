@@ -28,13 +28,13 @@ class AudioClassification:
     def __init__(self):
         self.learning_rate = 0.001
         self.training_iters = 800000
-        self.batch_size = 48
+        self.batch_size = 40
         self.display_step = 5
         self.validate_step = 5
         self.test_step = 5
         self.checkpoint_every = 400
         # Network Parameters
-        self.n_input = 48000  # MNIST data input (img shape: 28*28)
+        self.n_input = 32000  # MNIST data input (img shape: 28*28)
         self.n_classes = 2  # MNIST total classes (0-9 digits)
         self.dropout = 0.75  # Dropout, probability to keep units
         self.logdir = './log'
@@ -47,22 +47,22 @@ class AudioClassification:
         # Store layers weight & bias
         self.weights = {
             # 5 conv, 1 input, 32 outputs
-            'st1': tf.Variable(tf.random_normal([512, 1, 128])),
+            'st1': tf.Variable(tf.random_normal([32, 1, 32])),
 
-            'wc1': tf.Variable(tf.random_normal([128, 128, 128])),
+            'wc1': tf.Variable(tf.random_normal([32, 32, 32])),
             # 5x5 conv, 32 inputs, 64 outputs
-            'wc2': tf.Variable(tf.random_normal([128, 128, 128])),
+            'wc2': tf.Variable(tf.random_normal([32, 32, 32])),
             # fully connected, 7*7*64 inputs, 1024 outputs
-            'wd1': tf.Variable(tf.random_normal([47 * 128, 100])),
+            'wd1': tf.Variable(tf.random_normal([800 * 32, 100])),
             'wd2': tf.Variable(tf.random_normal([100, 50])),
             # 1024 inputs, 10 outputs (class prediction)
             'out': tf.Variable(tf.random_normal([50, self.n_classes]))
         }
 
         self.biases = {
-            'st1': tf.Variable(tf.random_normal([128])),
-            'bc1': tf.Variable(tf.random_normal([128])),
-            'bc2': tf.Variable(tf.random_normal([128])),
+            'st1': tf.Variable(tf.random_normal([32])),
+            'bc1': tf.Variable(tf.random_normal([32])),
+            'bc2': tf.Variable(tf.random_normal([32])),
             'bd1': tf.Variable(tf.random_normal([100])),
             'bd2': tf.Variable(tf.random_normal([50])),
             'out': tf.Variable(tf.random_normal([self.n_classes]))
@@ -88,7 +88,7 @@ class AudioClassification:
         x = tf.reshape(x, shape=[-1, self.n_input, 1])
 
         # Strided Layer
-        stride_conv = self.conv1d(x, weights['st1'], biases['st1'], strides=256)
+        stride_conv = self.conv1d(x, weights['st1'], biases['st1'], strides=10)
 
         # Convolution Layer
         conv1 = self.conv1d(stride_conv, weights['wc1'], biases['bc1'])
