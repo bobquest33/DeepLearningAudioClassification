@@ -26,7 +26,7 @@ from wrong_audio_reader import WrongAudioReader
 
 class AudioClassification:
     def __init__(self):
-        self.learning_rate = 0.001
+        self.learning_rate = 0.0006
         self.training_iters = 800000
         self.batch_size = 40
         self.display_step = 5
@@ -47,22 +47,21 @@ class AudioClassification:
         # Store layers weight & bias
         self.weights = {
             # 5 conv, 1 input, 32 outputs
-            'st1': tf.Variable(tf.random_normal([32, 1, 32])),
-
-            'wc1': tf.Variable(tf.random_normal([32, 32, 32])),
-            # 5x5 conv, 32 inputs, 64 outputs
-            'wc2': tf.Variable(tf.random_normal([32, 32, 32])),
+            'st1': tf.Variable(tf.random_normal([800, 1, 192])),
+            'wc1': tf.Variable(tf.random_normal([30, 192, 192])),
+            'wc2': tf.Variable(tf.random_normal([30, 192, 256])),
+            'wc3': tf.Variable(tf.random_normal([30, 256, 512])),
             # fully connected, 7*7*64 inputs, 1024 outputs
-            'wd1': tf.Variable(tf.random_normal([800 * 32, 100])),
-            'wd2': tf.Variable(tf.random_normal([100, 50])),
+            'wd1': tf.Variable(tf.random_normal([8 * 512, 100])),
             # 1024 inputs, 10 outputs (class prediction)
-            'out': tf.Variable(tf.random_normal([50, self.n_classes]))
+            'out': tf.Variable(tf.random_normal([100, self.n_classes]))
         }
 
         self.biases = {
-            'st1': tf.Variable(tf.random_normal([32])),
-            'bc1': tf.Variable(tf.random_normal([32])),
-            'bc2': tf.Variable(tf.random_normal([32])),
+            'st1': tf.Variable(tf.random_normal([192])),
+            'bc1': tf.Variable(tf.random_normal([192])),
+            'bc2': tf.Variable(tf.random_normal([256])),
+            'bc3': tf.Variable(tf.random_normal([512])),
             'bd1': tf.Variable(tf.random_normal([100])),
             'bd2': tf.Variable(tf.random_normal([50])),
             'out': tf.Variable(tf.random_normal([self.n_classes]))
@@ -75,7 +74,7 @@ class AudioClassification:
         x = tf.nn.bias_add(x, b)
         return tf.nn.relu(x)
 
-    def maxpool2d(self, x, channels, k=2):
+    def maxpool2d(self, x, channels, k=3):
         # MaxPool2D wrapper
         x = tf.reshape(x, shape=[self.batch_size, 1, -1, channels])
         out = tf.nn.max_pool(x, ksize=[1, 1, k, 1], strides=[1, 1, k, 1],
@@ -88,30 +87,28 @@ class AudioClassification:
         x = tf.reshape(x, shape=[-1, self.n_input, 1])
 
         # Strided Layer
-        stride_conv = self.conv1d(x, weights['st1'], biases['st1'], strides=10)
+        stride_conv = self.conv1d(x, weights['st1'], biases['st1'], strides=160)
 
         # Convolution Layer
         conv1 = self.conv1d(stride_conv, weights['wc1'], biases['bc1'])
-        # Max Pooling (down-sampling)
-        conv1 = self.maxpool2d(conv1, weights['wc2'].get_shape().as_list()[-1])
+        conv1 = self.maxpool2d(conv1, weights['wc1'].get_shape().as_list()[-1])
 
         # Convolution Layer
         conv2 = self.conv1d(conv1, weights['wc2'], biases['bc2'])
-        # Max Pooling (down-sampling)
         conv2 = self.maxpool2d(conv2, weights['wc2'].get_shape().as_list()[-1])
+
+        # Convolution Layer
+        conv3 = self.conv1d(conv2, weights['wc3'], biases['bc3'])
+        conv3 = self.maxpool2d(conv3, weights['wc3'].get_shape().as_list()[-1])
+
         # Fully connected layer
-        # Reshape conv2 output to fit fully connected layer input
-        fc1 = tf.reshape(conv2, [-1, weights['wd1'].get_shape().as_list()[0]])
+        fc1 = tf.reshape(conv3, [-1, weights['wd1'].get_shape().as_list()[0]])
         fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
         fc1 = tf.nn.relu(fc1)
-        # Apply Dropout
-        fc2 = tf.reshape(fc1, [-1, weights['wd2'].get_shape().as_list()[0]])
-        fc2 = tf.add(tf.matmul(fc2, weights['wd2']), biases['bd2'])
-        fc2 = tf.nn.relu(fc2)
-        fc2 = tf.nn.dropout(fc2, dropout)
+        fc1 = tf.nn.dropout(fc1, dropout)
 
         # Output, class prediction
-        out = tf.add(tf.matmul(fc2, weights['out']), biases['out'])
+        out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
         return out
 
     def save(self, saver, sess, logdir, step):
@@ -163,6 +160,8 @@ class AudioClassification:
         writer.add_graph(tf.get_default_graph())
         run_metadata = tf.RunMetadata()
         summaries = tf.merge_all_summaries()
+        test_accuracy_summary = tf.scalar_summary('test', accuracy)
+
         # Initializing the variables
         init = tf.initialize_all_variables()
         audio_reader = AudioReader(sample_size=self.n_input)
@@ -219,26 +218,26 @@ class AudioClassification:
 
                 if step % self.validate_step == 0:
                     audio_sample, audio_label, _ = audio_reader.pick_random(self.batch_size)
-                    print("Validation Accuracy:",
-                          sess.run(accuracy, feed_dict={self.x: audio_sample,
-                                                        self.y: audio_label,
-                                                        self.keep_prob: 1.}))
+                    accuracy_val = sess.run(accuracy, feed_dict={self.x: audio_sample,
+                                                                 self.y: audio_label,
+                                                                 self.keep_prob: 1.})
+                    print("Validation Accuracy:", accuracy_val)
                     # audio_sample_begin += n_input
                     # step += 1
 
                 if step % self.test_step == 0:
                     audio_sample, audio_label, _ = test_audio_reader.pick_random(self.batch_size)
-                    print("Testing Accuracy:",
-                          sess.run(accuracy, feed_dict={self.x: audio_sample,
-                                                        self.y: audio_label,
-                                                        self.keep_prob: 1.}))
+                    accuracy_val, test_accuracy_summ = sess.run([accuracy, test_accuracy_summary],
+                                                                feed_dict={self.x: audio_sample,
+                                                                           self.y: audio_label,
+                                                                           self.keep_prob: 1.})
+                    print("Testing Accuracy:", accuracy_val)
+                    writer.add_summary(test_accuracy_summ, step)
                     # audio_sample_begin += n_input
                     # step += 1
                 if step % self.checkpoint_every == 0:
                     self.save(saver, sess, self.logdir, step)
                 step += 1
-
-
 
         print("Optimization Finished!")
 
