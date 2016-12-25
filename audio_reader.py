@@ -98,3 +98,32 @@ class AudioReader:
         for audio in load_generic_audio(dir, sample_rate):
             audio_files.append((audio, label))
         return audio_files
+
+    def get_mfcc_audio_batches(self, file_name, batch_size):
+        samples, labels = self.mfcc_audio(file_name)
+        batches = []
+        print(len(samples))
+        for current_batch_index in range(0, len(samples), batch_size):
+            if current_batch_index + batch_size > len(samples):
+                break
+            samples_batch = samples[current_batch_index:current_batch_index + batch_size]
+            labels_batch = labels[current_batch_index:current_batch_index + batch_size]
+            batches.append((samples_batch, labels_batch))
+        return batches
+
+    def mfcc_audio(self, file_name):
+        audio, sr = librosa.load(file_name, sr=self.sample_rate, mono=True)
+        mfcc_audio = librosa.feature.mfcc(audio, sr)
+        mfcc_audio = np.array(mfcc_audio)
+        mfcc_audio = np.transpose(mfcc_audio)
+        print(mfcc_audio.shape)
+        current_audio_sample = 0
+        samples = []
+        labels = []
+        while current_audio_sample + self.sample_size < mfcc_audio.shape[0]:
+            sample = mfcc_audio[current_audio_sample:current_audio_sample + self.sample_size]
+            samples.append(sample)
+            labels.append([1, 0])
+            current_audio_sample += self.sample_size
+        return samples, labels
+

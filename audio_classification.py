@@ -20,11 +20,11 @@ import sys
 
 # Parameters
 learning_rate = 0.001
-training_iters = 400
-batch_size = 100
+training_iters = 4400
+batch_size = 4
 display_step = 5
 validate_step = 1
-checkpoint_every = 400
+checkpoint_every = 4400
 # Network Parameters
 n_input = 400  # MNIST data input (img shape: 28*28)
 sample_size = 20
@@ -32,6 +32,7 @@ mfcc_n = 20
 n_classes = 2  # MNIST total classes (0-9 digits)
 dropout = 0.75  # Dropout, probability to keep units
 logdir = './log'
+sample_rate = 16000
 
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, n_input])
@@ -39,6 +40,18 @@ y = tf.placeholder(tf.float32, [None, n_classes])
 
 keep_prob = tf.placeholder(tf.float32)  # dropout (keep probability)
 
+
+def time_shift(mfcc_predict):
+    print(mfcc_predict)
+    count = 1
+    current = mfcc_predict[0]
+    for ele in mfcc_predict[1:]:
+        if ele == current:
+            count += 1
+        else:
+            print("time:{} and {}".format(count * 0.441, current))
+            count = 1
+            current = ele
 
 # Create some wrappers for simplicity
 def conv2d(x, W, b, strides=1):
@@ -144,6 +157,7 @@ cost_summary = tf.scalar_summary('cost', cost)
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 # Evaluate model
+predict_result = tf.argmax(pred, 1)
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
@@ -164,8 +178,8 @@ audio_reader.get_all_batches()
 audio_reader.shuffle_batches()
 
 validate_audio_reader = AudioReader(sample_size=sample_size,
-                                    vocal_audio_directory='./validate_vocal',
-                                    non_vocal_audio_directory='./validate_non_vocal')
+                                    vocal_audio_directory='./test_data/vocal',
+                                    non_vocal_audio_directory='./test_data/non_vocal')
 validate_audio_reader.get_all_batches()
 validate_audio_reader.shuffle_batches()
 
@@ -193,8 +207,6 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
         pred_res, softmax_res, cross_entropy_res = sess.run([pred, softmax, cross_entropy],
                                                             feed_dict={x: audio_sample, y: audio_label,
                                                                        keep_prob: dropout})
-        print(pred_res, softmax_res, cross_entropy_res)
-        sleep(1000)
         writer.add_summary(summary, step)
         writer.add_summary(cost_summ, step)
         if step % display_step == 0:
@@ -219,5 +231,18 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
         if step % checkpoint_every == 0:
             save(saver, sess, logdir, step)
         step += 1
+
+    res = []
+    for sample_batch, label_batch in audio_reader.get_mfcc_audio_batches('./remote_data/valid/song.wav',
+                                                                         batch_size):
+        sample_batch = np.array(sample_batch)
+        sample_batch = sample_batch.reshape(sample_batch.shape[0], sample_batch.shape[1] * sample_batch.shape[2])
+        print(sample_batch.shape)
+        res.extend(sess.run([predict_result], feed_dict={x: sample_batch, y: label_batch,
+                                                         keep_prob: 1.})[0].tolist())
+    time_shift(res)
+
+
+
 
 print("Optimization Finished!")

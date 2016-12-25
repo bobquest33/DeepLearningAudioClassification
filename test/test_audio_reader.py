@@ -10,8 +10,8 @@ class TestAudioReader(TestCase):
     def setUp(self):
         self.audio_reader = AudioReader(sample_size=20)
         self.validate_audio_reader = AudioReader(sample_size=20,
-                                            vocal_audio_directory='./validate_vocal',
-                                            non_vocal_audio_directory='./validate_non_vocal')
+                                                 vocal_audio_directory='./vocal',
+                                                 non_vocal_audio_directory='./non_vocal')
 
         self.sample_buckets = {}
         self.label_buckets = {}
