@@ -12,6 +12,8 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy
 
+from utils.filter_display import FilterDisplay
+
 numpy.set_printoptions(threshold=numpy.nan)
 # Import MNIST data
 # from tensorflow.examples.tutorials.mnist import input_data
@@ -178,6 +180,7 @@ class AudioClassification:
         # Launch the graph
         with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             sess.run(init)
+
             step = 1
             # Keep training until reach max iterations
             saver = tf.train.Saver(var_list=tf.trainable_variables())
@@ -190,7 +193,8 @@ class AudioClassification:
                       "We will terminate training to avoid accidentally overwriting "
                       "the previous model.")
                 raise
-
+            FilterDisplay.show_weight(sess.run(self.weights['st1']))
+            sleep(1000)
             while step < self.training_iters:
 
                 audio_sample, audio_label, _ = audio_reader.next_batch(self.batch_size)
