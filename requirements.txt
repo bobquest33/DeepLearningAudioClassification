@@ -1,2 +1,3 @@
 librosa>=0.4.3
 pyglet
+tqdm

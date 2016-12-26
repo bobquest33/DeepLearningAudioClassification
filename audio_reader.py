@@ -6,6 +6,8 @@ import numpy as np
 import librosa
 import random
 
+from tqdm import tqdm
+
 MFCC_N = 20
 
 
@@ -21,7 +23,8 @@ def find_files(directory, pattern='*.wav'):
 def load_generic_audio(directory, sample_rate):
     files = find_files(directory)
     audios = []
-    for filename in files:
+    # files_count = len(files)
+    for filename in tqdm(files, ncols=200):
         audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
         audios.append(audio)
     return audios
@@ -98,3 +101,7 @@ class AudioReader:
         for audio in load_generic_audio(dir, sample_rate):
             audio_files.append((audio, label))
         return audio_files
+
+AudioReader(sample_size=32000,
+            vocal_audio_directory='./mp3/vocal',
+            non_vocal_audio_directory='./mp3/non_vocal')
