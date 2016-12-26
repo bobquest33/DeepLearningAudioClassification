@@ -5,6 +5,7 @@ from time import sleep
 import numpy as np
 import librosa
 import random
+import tensorflow as tf
 
 from tqdm import tqdm
 
@@ -32,12 +33,23 @@ def load_generic_audio(directory, sample_rate):
 
 class AudioReader:
     def __init__(self,
+                 coord,
+                 queue_size,
+                 n_classes=2,
                  sample_rate=16000,
                  sample_size=20,
                  vocal_audio_directory='./vocal',
                  non_vocal_audio_directory='./non_vocal'):
+        self.coord = coord
+        self.queue_size = queue_size
         self.sample_rate = sample_rate
         self.sample_size = sample_size
+        self.n_classes = n_classes
+        self.x = tf.placeholder(tf.float32, shape=None)
+        self.y = tf.placeholder(tf.float32, shape=None)
+        self.queue = tf.PaddingFIFOQueue(queue_size, ['float32', 'float32'],
+                                         shapes=[None, None])
+        self.enqueue = self.queue.enqueue([self.x, self.y])
         self.audios = self.read_dir(vocal_audio_directory, self.sample_rate, is_vocal=True)
         self.audios.extend(self.read_dir(non_vocal_audio_directory, self.sample_rate))
         shuffle(self.audios)
@@ -51,6 +63,16 @@ class AudioReader:
         self.tuples = []
         self.current_batch_index = 0
         self.roll = False
+
+    def dequeue(self, num_elements):
+        output = self.queue.dequeue_many(num_elements)
+        return output
+
+    def thread_main(self, sess):
+        pass
+
+    def start_thread(self):
+        pass
 
     def get_all_batches(self):
         self.tuples = []
@@ -101,6 +123,7 @@ class AudioReader:
         for audio in load_generic_audio(dir, sample_rate):
             audio_files.append((audio, label))
         return audio_files
+
 
 AudioReader(sample_size=32000,
             vocal_audio_directory='./mp3/vocal',
