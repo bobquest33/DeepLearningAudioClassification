@@ -1,2 +1,9 @@
-vocal/*.*
-non_vocal/*.*
+vocal/
+non_vocal/
+test_non_vocal/
+test_vocal/
+.idea/workspace.xml
+test_data/
+board/
+log/
+__pycache__/
