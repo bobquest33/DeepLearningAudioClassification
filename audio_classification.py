@@ -69,6 +69,8 @@ class AudioClassification:
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
 
+        self.filter_display = FilterDisplay()
+
     # Create some wrappers for simplicity
     def conv1d(self, x, W, b, strides=1):
         # Conv1D wrapper, with bias and relu activation
@@ -193,9 +195,8 @@ class AudioClassification:
                       "We will terminate training to avoid accidentally overwriting "
                       "the previous model.")
                 raise
-            FilterDisplay.show_weight(sess.run(self.weights['st1']))
-            sleep(1000)
             while step < self.training_iters:
+                self.filter_display.show_weight(sess.run(self.weights['st1']))
 
                 audio_sample, audio_label, _ = audio_reader.next_batch(self.batch_size)
 
