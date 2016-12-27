@@ -34,7 +34,7 @@ class AudioReader:
     def __init__(self,
                  coord,
                  queue_size=256,
-                 min_after_dequeue=10,
+                 min_after_dequeue=0,
                  n_classes=2,
                  sample_rate=16000,
                  sample_size=32000,
@@ -52,9 +52,9 @@ class AudioReader:
         self.enqueue = self.queue.enqueue([self.x, self.y])
         self.vocal_audio_directory = os.path.join(ROOT_DIR, vocal_audio_directory)
         self.non_vocal_audio_directory = os.path.join(ROOT_DIR, non_vocal_audio_directory)
-        self.audios = self.read_dir(vocal_audio_directory, self.sample_rate, is_vocal=True)
-        self.audios.extend(self.read_dir(non_vocal_audio_directory, self.sample_rate))
-        shuffle(self.audios)
+        # self.audios = self.read_dir(vocal_audio_directory, self.sample_rate, is_vocal=True)
+        # self.audios.extend(self.read_dir(non_vocal_audio_directory, self.sample_rate))
+        # shuffle(self.audios)
         self.current_audio = None
         self.current_audio_label = None
         self.current_audio_index = 0
@@ -85,11 +85,11 @@ class AudioReader:
                 while len(vocal_buffer_) > self.sample_size:
                     piece = np.reshape(vocal_buffer_[:self.sample_size], [-1, 1])
                     sess.run(self.enqueue, feed_dict={self.x: piece, self.y: np.array([[0], [1]])})
-                    vocal_buffer_ = vocal_buffer_[:self.sample_size]
+                    vocal_buffer_ = vocal_buffer_[self.sample_size:]
                 while len(non_vocal_buffer_) > self.sample_size:
                     piece = np.reshape(non_vocal_buffer_[:self.sample_size], [-1, 1])
                     sess.run(self.enqueue, feed_dict={self.x: piece, self.y: np.array([[1], [0]])})
-                    non_vocal_buffer_ = non_vocal_buffer_[:self.sample_size]
+                    non_vocal_buffer_ = non_vocal_buffer_[self.sample_size:]
         self.coord.request_stop()
 
     def start_thread(self, sess):

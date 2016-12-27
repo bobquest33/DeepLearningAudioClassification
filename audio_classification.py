@@ -40,7 +40,7 @@ class AudioClassification:
         self.n_classes = 2  # MNIST total classes (0-9 digits)
         self.dropout = 0.75  # Dropout, probability to keep units
         self.logdir = './log'
-
+        self.coord = tf.train.Coordinator()
         # tf Graph input
         self.x = tf.placeholder(tf.float32, [None, self.n_input])
         self.y = tf.placeholder(tf.float32, [None, self.n_classes])
@@ -149,100 +149,111 @@ class AudioClassification:
     # Construct model
 
     def run(self):
-        pred = self.conv_net(self.x, self.weights, self.biases, self.keep_prob)
+        print('wt1')
+        sess = tf.Session(config=tf.ConfigProto(log_device_placement=False))
+
+        audio_reader = AudioReader(coord=self.coord, sample_size=self.n_input)
+
+        test_audio_reader = AudioReader(coord=self.coord,
+                                        sample_size=self.n_input,
+                                        queue_size=42,
+                                        vocal_audio_directory='./test_data/vocal',
+                                        non_vocal_audio_directory='./test_data/non_vocal')
+        audio_reader.start_thread(sess)
+        test_audio_reader.start_thread(sess)
+
+        audio_batch, label_batch = audio_reader.dequeue(self.batch_size)
+        label_batch = tf.reshape(label_batch, shape=[self.batch_size, self.n_classes])
+
+        test_audio_batch, test_label_batch = test_audio_reader.dequeue(self.batch_size)
+        test_label_batch = tf.reshape(label_batch, shape=[self.batch_size, self.n_classes])
+
+        pred = self.conv_net(audio_batch, self.weights, self.biases, self.keep_prob)
+        test_pred = self.conv_net(test_audio_batch, self.weights, self.biases, self.keep_prob)
         # Define loss and optimizer
-        cross_entropy = tf.nn.softmax_cross_entropy_with_logits(pred, self.y)
+        cross_entropy = tf.nn.softmax_cross_entropy_with_logits(pred, label_batch)
         cost = tf.reduce_mean(cross_entropy)
         tf.scalar_summary('cost', cost)
         optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(cost)
 
         # Evaluate model
-        correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(self.y, 1))
+        correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(label_batch, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
         tf.scalar_summary('acc', accuracy)
+
+        test_correct_pred = tf.equal(tf.argmax(test_pred, 1), tf.argmax(test_label_batch, 1))
+        test_accuracy = tf.reduce_mean(tf.cast(test_correct_pred, tf.float32))
+
         writer = tf.train.SummaryWriter('board')
         writer.add_graph(tf.get_default_graph())
         run_metadata = tf.RunMetadata()
         summaries = tf.merge_all_summaries()
-        test_accuracy_summary = tf.scalar_summary('test', accuracy)
+        # test_accuracy_summary = tf.scalar_summary('test', accuracy)
 
         # Initializing the variables
         init = tf.initialize_all_variables()
-        audio_reader = AudioReader(sample_size=self.n_input)
-        audio_reader.get_all_batches()
-        audio_reader.tied_batches()
 
-        test_audio_reader = AudioReader(sample_size=self.n_input,
-                                        vocal_audio_directory='./test_data/vocal',
-                                        non_vocal_audio_directory='./test_data/non_vocal')
-        test_audio_reader.get_all_batches()
-        test_audio_reader.tied_batches()
-        # audio_reader = WrongAudioReader(sample_size=self.n_input)
-        # audio_reader.get_all(20)
         # Launch the graph
-        with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-            sess.run(init)
 
-            step = 1
-            # Keep training until reach max iterations
-            saver = tf.train.Saver(var_list=tf.trainable_variables())
-            try:
-                step = self.load(saver, sess, self.logdir)
-                if step == None:
-                    step = 1
-            except:
-                print("Something went wrong while restoring checkpoint. "
-                      "We will terminate training to avoid accidentally overwriting "
-                      "the previous model.")
-                raise
-            while step < self.training_iters:
-                self.filter_display.show_weight(sess.run(self.weights['st1']))
 
-                audio_sample, audio_label, _ = audio_reader.next_batch(self.batch_size)
+        sess.run(init)
 
-                # print(sess.run([pred], feed_dict={self.x: audio_sample, self.y: audio_label,
-                #                                   self.keep_prob: self.dropout})[0].shape)
-                # print(audio_sample[0])
-                # sleep(1000)
-                summary, _, _ = sess.run([summaries, optimizer, accuracy],
-                                         feed_dict={self.x: audio_sample, self.y: audio_label,
-                                                    self.keep_prob: self.dropout})
+        step = 1
+        # Keep training until reach max iterations
+        saver = tf.train.Saver(var_list=tf.trainable_variables())
+        try:
+            step = self.load(saver, sess, self.logdir)
+            if step == None:
+                step = 1
+        except:
+            print("Something went wrong while restoring checkpoint. "
+                  "We will terminate training to avoid accidentally overwriting "
+                  "the previous model.")
+            raise
+        while step < self.training_iters:
+            # self.filter_display.show_weight(sess.run(self.weights['st1']))
+            # audio_sample, audio_label, _ = audio_reader.next_batch(self.batch_size)
 
-                writer.add_summary(summary, step)
-                if step % self.display_step == 0:
-                    # Calculate batch loss and accuracy
-                    # print(sess.run(correct_pred, feed_dict={x: audio_sample, y: audio_label,
-                    #                                         keep_prob: 1.}))
-                    loss, acc = sess.run([cost, accuracy], feed_dict={self.x: audio_sample,
-                                                                      self.y: audio_label,
-                                                                      self.keep_prob: 1.})
+            # print(sess.run([pred], feed_dict={self.x: audio_sample, self.y: audio_label,
+            #                                   self.keep_prob: self.dropout})[0].shape)
+            # print(audio_sample[0])
+            # sleep(1000)
+            print("current step: {}".format(step))
+            summary, _, acc = sess.run([summaries, optimizer, accuracy],
+                                       feed_dict={self.keep_prob: self.dropout})
+            print("Iter " + str(step * self.batch_size) + ", Training Accuracy= " + \
+                  "{:.5f}".format(acc))
+            writer.add_summary(summary, step)
+            # if step % self.display_step == 0:
+            #     # Calculate batch loss and accuracy
+            #     # print(sess.run(correct_pred, feed_dict={x: audio_sample, y: audio_label,
+            #     #                                         keep_prob: 1.}))
+            #     loss, acc = sess.run([cost, accuracy], feed_dict={self.keep_prob: 1.})
+            #
+            #     print("Iter " + str(step * self.batch_size) + ", Minibatch Loss= " + \
+            #           "{:.6f}".format(loss) + ", Training Accuracy= " + \
+            #           "{:.5f}".format(acc))
 
-                    print("Iter " + str(step * self.batch_size) + ", Minibatch Loss= " + \
-                          "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                          "{:.5f}".format(acc))
+            # if step % self.validate_step == 0:
+            #     audio_sample, audio_label, _ = audio_reader.pick_random(self.batch_size)
+            #     accuracy_val = sess.run(accuracy, feed_dict={self.x: audio_sample,
+            #                                                  self.y: audio_label,
+            #                                                  self.keep_prob: 1.})
+            #     print("Validation Accuracy:", accuracy_val)
+            #     # audio_sample_begin += n_input
+            #     # step += 1
 
-                if step % self.validate_step == 0:
-                    audio_sample, audio_label, _ = audio_reader.pick_random(self.batch_size)
-                    accuracy_val = sess.run(accuracy, feed_dict={self.x: audio_sample,
-                                                                 self.y: audio_label,
-                                                                 self.keep_prob: 1.})
-                    print("Validation Accuracy:", accuracy_val)
-                    # audio_sample_begin += n_input
-                    # step += 1
-
-                if step % self.test_step == 0:
-                    audio_sample, audio_label, _ = test_audio_reader.pick_random(self.batch_size)
-                    accuracy_val, test_accuracy_summ = sess.run([accuracy, test_accuracy_summary],
-                                                                feed_dict={self.x: audio_sample,
-                                                                           self.y: audio_label,
-                                                                           self.keep_prob: 1.})
-                    print("Testing Accuracy:", accuracy_val)
-                    writer.add_summary(test_accuracy_summ, step)
-                    # audio_sample_begin += n_input
-                    # step += 1
-                if step % self.checkpoint_every == 0:
-                    self.save(saver, sess, self.logdir, step)
-                step += 1
+            if step % self.test_step == 0:
+                # audio_sample, audio_label, _ = test_audio_reader.pick_random(self.batch_size)
+                accuracy_val = sess.run(test_accuracy,
+                                        feed_dict={self.keep_prob: 1.})
+                print("Testing Accuracy:", accuracy_val)
+                # writer.add_summary(test_accuracy_summ, step)
+                # audio_sample_begin += n_input
+                # step += 1
+            if step % self.checkpoint_every == 0:
+                self.save(saver, sess, self.logdir, step)
+            step += 1
 
         print("Optimization Finished!")
 

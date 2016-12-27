@@ -17,13 +17,11 @@ class TestAudioThread(tf.test.TestCase):
         with self.test_session() as sess:
             tf.train.start_queue_runners(sess=sess, coord=self.coord)
             self.reader.start_thread(sess)
-            for _ in range(10):
-                batch = self.reader.dequeue(1)
-                audio, label = sess.run(batch)
-                audio = np.reshape(audio, [-1])
-                label = np.reshape(label, [-1])
-                librosa.output.write_wav('piece{}.wav'.format(_), audio, 16000)
-                print(label)
+            batch = self.reader.dequeue(3)
+            audio, label = sess.run(batch)
+            label = np.reshape(label, [3, 2])
+            print(label)
+                # librosa.output.write_wav('piece{}.wav'.format(_), audio, 16000)
             # print(sess.run(batch))
             # print(sess.run(y))
             self.coord.request_stop()
