@@ -27,14 +27,14 @@ def load_generic_audio(directory, sample_rate):
     # files_count = len(files)
     for filename in files:
         audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
-        yield audio
+        yield audio, filename
 
 
 class AudioReader:
     def __init__(self,
                  coord,
                  queue_size=256,
-                 min_after_dequeue=0,
+                 min_after_dequeue=20,
                  n_classes=2,
                  sample_rate=16000,
                  sample_size=32000,
@@ -76,10 +76,12 @@ class AudioReader:
         while not stop:
             vocal_iterator = load_generic_audio(self.vocal_audio_directory, self.sample_rate)
             non_vocal_iterator = load_generic_audio(self.non_vocal_audio_directory, self.sample_rate)
-            for vocal_audio, non_vocal_audio in zip(vocal_iterator, non_vocal_iterator):
+            for (vocal_audio, vocal_file), (non_vocal_audio, non_vocal_file) in zip(vocal_iterator, non_vocal_iterator):
                 if self.coord.should_stop():
                     stop = True
                     break
+                print("vocal: {}".format(vocal_file))
+                print("non vocal: {}".format(non_vocal_file))
                 vocal_buffer_ = np.array(vocal_audio)
                 non_vocal_buffer_ = np.array(non_vocal_audio)
                 while len(vocal_buffer_) > self.sample_size:
