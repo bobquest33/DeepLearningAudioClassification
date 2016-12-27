@@ -13,6 +13,10 @@ class MagnaTagReader:
         self.mp3_dir = os.path.join(ROOT_DIR, './mp3')
         self.output_vocal_dir = os.path.join(self.mp3_dir, 'vocal')
         self.output_non_vocal_dir = os.path.join(self.mp3_dir, 'non_vocal')
+        if not os.path.exists(self.output_vocal_dir):
+            os.makedirs(self.output_vocal_dir)
+        if not os.path.exists(self.output_non_vocal_dir):
+            os.makedirs(self.output_non_vocal_dir)
 
     def read_and_copy(self):
         csv_reader = csv.reader(self.tag_file, delimiter=',')

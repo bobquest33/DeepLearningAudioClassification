@@ -5,6 +5,28 @@ import matplotlib.pyplot as plt
 from audio_reader import AudioReader
 from wrong_audio_reader import WrongAudioReader
 import numpy as np
+import tensorflow as tf
+
+
+class TestAudioThread(tf.test.TestCase):
+    def setUp(self):
+        self.coord = tf.train.Coordinator()
+        self.reader = AudioReader(self.coord)
+
+    def test_thread(self):
+        with self.test_session() as sess:
+            tf.train.start_queue_runners(sess=sess, coord=self.coord)
+            self.reader.start_thread(sess)
+            for _ in range(10):
+                batch = self.reader.dequeue(1)
+                audio, label = sess.run(batch)
+                audio = np.reshape(audio, [-1])
+                label = np.reshape(label, [-1])
+                librosa.output.write_wav('piece{}.wav'.format(_), audio, 16000)
+                print(label)
+            # print(sess.run(batch))
+            # print(sess.run(y))
+            self.coord.request_stop()
 
 
 class TestAudioReader(TestCase):
