@@ -30,6 +30,41 @@ def load_generic_audio(directory, sample_rate):
         yield audio, filename
 
 
+def tag_and_rename_files(vocal_directory, non_vocal_directory):
+    vocal_files = os.listdir(vocal_directory)
+    non_vocal_files = os.listdir(non_vocal_directory)
+    for file in vocal_files:
+        new_file = os.path.join(vocal_directory, "v_{}".format(file))
+        file = os.path.join(vocal_directory, file)
+        os.rename(file, new_file)
+    for file in non_vocal_files:
+        new_file = os.path.join(non_vocal_directory, "n_{}".format(file))
+        file = os.path.join(non_vocal_directory, file)
+        os.rename(file, new_file)
+
+
+def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=48000, sample_rate=16000):
+    files = find_files(vocal_directory)
+    files.extend(find_files(non_vocal_directory))
+    batch_waves = []
+    batch_labels = []
+    while True:
+        shuffle(files)
+        for filename in files:
+            audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
+            label_eye = 1 if filename[0] == 'n' else 0
+            label = np.eye(2)[label_eye]
+            audio = audio[:sample_size]
+            if len(audio) < sample_size:
+                continue
+            batch_waves.append(audio)
+            batch_labels.append(label)
+            if len(batch_waves) >= batch_size:
+                yield batch_waves, batch_labels
+                batch_waves = []
+                batch_labels = []
+
+
 class AudioReader:
     def __init__(self,
                  coord,
@@ -154,3 +189,6 @@ class AudioReader:
         #             vocal_audio_directory='./mp3/vocal',
         #             non_vocal_audio_directory='./mp3/non_vocal')
         #
+
+
+tag_and_rename_files('./vocal', './non_vocal')
