@@ -1,6 +1,7 @@
 import csv
 import os
 from shutil import copyfile
+from subprocess import call
 from time import sleep
 
 from definitions import ROOT_DIR
@@ -25,12 +26,15 @@ class MagnaTagReader:
             clip_id = "{}.wav".format(row[0])
             path = row[3]
             print(row)
-            y, sr = librosa.load(os.path.join(self.mp3_dir, path))
             # non vocal
             if row[1] == '1':
-                librosa.output.write_wav(os.path.join(self.output_non_vocal_dir, clip_id), y, sr)
+                os.system("ffmpeg -i {} -acodec pcm_s16le -ac 1 -ar 16000 {}".format(os.path.join(self.mp3_dir, path),
+                                                                                os.path.join(self.output_non_vocal_dir,
+                                                                                             clip_id)))
             else:
-                librosa.output.write_wav(os.path.join(self.output_vocal_dir, clip_id), y, sr)
+                os.system("ffmpeg -i {} -acodec pcm_s16le -ac 1 -ar 16000 {}".format(os.path.join(self.mp3_dir, path),
+                                                                                os.path.join(self.output_vocal_dir,
+                                                                                             clip_id)))
 
 
 MagnaTagReader().read_and_copy()

@@ -1,5 +1,6 @@
 import fnmatch
 import os
+import wave
 from random import shuffle, random
 from time import sleep
 import numpy as np
@@ -11,7 +12,7 @@ import threading
 from definitions import ROOT_DIR
 
 MFCC_N = 20
-
+CHUNK = 36000
 
 def find_files(directory, pattern='*.wav'):
     '''Recursively finds all files matching the pattern.'''
@@ -42,8 +43,26 @@ def tag_and_rename_files(vocal_directory, non_vocal_directory):
         file = os.path.join(non_vocal_directory, file)
         os.rename(file, new_file)
 
+def load_wav_file(name):
+    f = wave.open(name, "rb")
+    # print("loading %s"%name)
+    chunk = []
+    data0 = f.readframes(CHUNK)
+    while data0:  # f.getnframes()
+        # data=numpy.fromstring(data0, dtype='float32')
+        # data = numpy.fromstring(data0, dtype='uint16')
+        data = np.fromstring(data0, dtype='uint16')
+        data = (data + 128) / 255.  # 0-1 for Better convergence
+        # chunks.append(data)
+        chunk.extend(data)
+        data0 = f.readframes(CHUNK)
+    # finally trim:
+    # chunk.extend(np.zeros(CHUNK * 2 - len(chunk)))  # fill with padding 0's
+    # print("%s loaded"%name)
+    return chunk
 
-def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=48000, sample_rate=16000):
+
+def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=32000, sample_rate=16000):
     files = find_files(vocal_directory)
     files.extend(find_files(non_vocal_directory))
     batch_waves = []
@@ -51,18 +70,23 @@ def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sam
     while True:
         shuffle(files)
         for filename in files:
-            audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
+            audio = load_wav_file(filename)
+            filename = os.path.basename(filename)
             label_eye = 1 if filename[0] == 'n' else 0
             label = np.eye(2)[label_eye]
-            audio = audio[:sample_size]
-            if len(audio) < sample_size:
-                continue
-            batch_waves.append(audio)
-            batch_labels.append(label)
-            if len(batch_waves) >= batch_size:
-                yield batch_waves, batch_labels
-                batch_waves = []
-                batch_labels = []
+            while len(audio) >= sample_size:
+                waves = audio[:sample_size]
+                batch_waves.append(waves)
+                batch_labels.append(label)
+                if len(batch_waves) >= batch_size:
+                    yield batch_waves, batch_labels
+                    batch_waves = []
+                    batch_labels = []
+                audio = audio[sample_size:]
+                print("batch_size: {}".format(len(batch_waves)))
+            print("load {}".format(filename))
+# batch = wav_batch_generator('./mp3/vocal', './mp3/non_vocal')
+# next(batch)
 
 
 class AudioReader:
@@ -189,6 +213,3 @@ class AudioReader:
         #             vocal_audio_directory='./mp3/vocal',
         #             non_vocal_audio_directory='./mp3/non_vocal')
         #
-
-
-tag_and_rename_files('./vocal', './non_vocal')
