@@ -43,6 +43,7 @@ def tag_and_rename_files(vocal_directory, non_vocal_directory):
         file = os.path.join(non_vocal_directory, file)
         os.rename(file, new_file)
 
+
 def load_wav_file(name):
     f = wave.open(name, "rb")
     # print("loading %s"%name)
