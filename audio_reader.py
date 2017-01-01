@@ -102,7 +102,7 @@ def random_pick_to_test_dataset(vocal_directory, non_vocal_directory, test_data_
         os.makedirs(output_vocal_dir)
     if not os.path.exists(output_non_vocal_dir):
         os.makedirs(output_non_vocal_dir)
-    picked = random.sample(files, len(files)//10)
+    picked = random.sample(files, len(files) // 10)
     for file_path in picked:
         filename = os.path.basename(file_path)
         if filename[0] == 'n':
@@ -111,8 +111,18 @@ def random_pick_to_test_dataset(vocal_directory, non_vocal_directory, test_data_
             os.rename(file_path, os.path.join(output_vocal_dir, filename))
 
 
+def put_back_test_dataset(test_dir, vocal_dir, non_vocal_dir):
+    files = find_files(test_dir)
+    for file_path in files:
+        filename = os.path.basename(file_path)
+        if filename[0] == 'n':
+            os.rename(file_path, os.path.join(non_vocal_dir, filename))
+        else:
+            os.rename(file_path, os.path.join(vocal_dir, filename))
+
 
 # random_pick_to_test_dataset('./vocal', './non_vocal', './test_data')
+# put_back_test_dataset('./test_data', './vocal', './non_vocal')
 
 
 class AudioReader:
