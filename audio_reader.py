@@ -8,11 +8,13 @@ import librosa
 import random
 import tensorflow as tf
 import threading
+import shutil
 
 from definitions import ROOT_DIR
 
 MFCC_N = 20
 CHUNK = 36000
+
 
 def find_files(directory, pattern='*.wav'):
     '''Recursively finds all files matching the pattern.'''
@@ -70,6 +72,7 @@ def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sam
     batch_labels = []
     while True:
         shuffle(files)
+        file_count = 0
         for filename in files:
             audio = load_wav_file(filename)
             filename = os.path.basename(filename)
@@ -85,9 +88,31 @@ def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sam
                     batch_labels = []
                 audio = audio[sample_size:]
                 print("batch_size: {}".format(len(batch_waves)))
-            print("load {}".format(filename))
-# batch = wav_batch_generator('./mp3/vocal', './mp3/non_vocal')
-# next(batch)
+            print("load {} files.".format(file_count))
+            file_count += 1
+
+
+def random_pick_to_test_dataset(vocal_directory, non_vocal_directory, test_data_directory):
+    files = find_files(vocal_directory)
+    files.extend(find_files(non_vocal_directory))
+    output_vocal_dir = os.path.join(test_data_directory, 'vocal')
+    output_non_vocal_dir = os.path.join(test_data_directory, 'non_vocal')
+
+    if not os.path.exists(output_vocal_dir):
+        os.makedirs(output_vocal_dir)
+    if not os.path.exists(output_non_vocal_dir):
+        os.makedirs(output_non_vocal_dir)
+    picked = random.sample(files, len(files)//10)
+    for file_path in picked:
+        filename = os.path.basename(file_path)
+        if filename[0] == 'n':
+            os.rename(file_path, os.path.join(output_non_vocal_dir, filename))
+        else:
+            os.rename(file_path, os.path.join(output_vocal_dir, filename))
+
+
+
+# random_pick_to_test_dataset('./vocal', './non_vocal', './test_data')
 
 
 class AudioReader:
