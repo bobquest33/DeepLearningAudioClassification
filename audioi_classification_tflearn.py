@@ -13,9 +13,9 @@ train_vocal_dir = './vocal'
 train_non_vocal_dir = './non_vocal'
 
 
-batch_size = 1400
-test_batch_size = 150
-sample_size = 16000
+batch_size = 1000
+test_batch_size = 100
+sample_size = 10000
 
 n_classes = 2
 
@@ -23,11 +23,11 @@ tflearn.init_graph(num_cores=8, gpu_memory_fraction=0.5)
 
 inp = tflearn.input_data(shape=[None, sample_size, 1], name='input')
 stride1 = tflearn.conv_1d(inp, 16, 256, 160, activation='relu', regularizer='L2')
-stride_pool1 = tflearn.max_pool_1d(stride1, 4)
+stride1 = tflearn.max_pool_1d(stride1, 2)
 
 stride2 = tflearn.conv_1d(inp, 16, 512, 320, activation='relu', regularizer='L2')
-stride_pool2 = tflearn.max_pool_1d(stride2, 2)
-stride_out = merge([stride_pool1, stride_pool2], mode='concat', axis=2)
+# stride_pool2 = tflearn.max_pool_1d(stride2, 2)
+stride_out = merge([stride1, stride2], mode='concat', axis=2)
 net = tflearn.conv_1d(stride_out, 32, 8, activation='relu', regularizer='L2')
 
 net = tflearn.max_pool_1d(net, 4)
@@ -53,7 +53,7 @@ try:
 
     model.fit(X, Y, n_epoch=120, show_metric=True, batch_size=80, snapshot_step=30,
               validation_set=(test_X, test_Y)
-              , run_id='16k4plus4-0.0001-all-no-bias{}'.format(1))
+              , run_id='10k16plus16-0.0001-all-{}2323 nopool'.format(0))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')
