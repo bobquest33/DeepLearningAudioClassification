@@ -55,7 +55,7 @@ def load_wav_file(name):
         # data=numpy.fromstring(data0, dtype='float32')
         # data = numpy.fromstring(data0, dtype='uint16')
         data = np.fromstring(data0, dtype='uint16')
-        data = (data + 128) / 255.  # 0-1 for Better convergence
+        data = (data + 32768) / 65536.  # 0-1 for Better convergence
         # chunks.append(data)
         chunk.extend(data)
         data0 = f.readframes(CHUNK)
@@ -87,6 +87,9 @@ def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sam
                     batch_waves = []
                     batch_labels = []
                 audio = audio[sample_size:]
+                # librosa.output.write_wav('./test.wav', np.array(audio), sample_rate, norm=True)
+                # print('done')
+                # sleep(1000)
                 print("batch_size: {}".format(len(batch_waves)))
             print("load {} files.".format(file_count))
             file_count += 1

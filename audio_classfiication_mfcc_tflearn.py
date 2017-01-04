@@ -19,24 +19,24 @@ sample_size = 16000
 
 n_classes = 2
 
-tflearn.init_graph(num_cores=8, gpu_memory_fraction=0.5)
+tflearn.init_graph(num_cores=4, gpu_memory_fraction=0.5)
 
 inp = tflearn.input_data(shape=[None, sample_size, 1], name='input')
-stride1 = tflearn.conv_1d(inp, 16, 256, 160, activation='relu', regularizer='L2')
+stride1 = tflearn.conv_1d(inp, 4, 256, 160, activation='relu', regularizer='L2', bias=False)
 stride_pool1 = tflearn.max_pool_1d(stride1, 4)
 
-stride2 = tflearn.conv_1d(inp, 16, 512, 320, activation='relu', regularizer='L2')
+stride2 = tflearn.conv_1d(inp, 4, 512, 320, activation='relu', regularizer='L2', bias=False)
 stride_pool2 = tflearn.max_pool_1d(stride2, 2)
 stride_out = merge([stride_pool1, stride_pool2], mode='concat', axis=2)
-net = tflearn.conv_1d(stride_out, 32, 8, activation='relu', regularizer='L2')
+net = tflearn.conv_1d(stride_out, 32, 8, activation='relu', regularizer='L2', bias=False)
 
 net = tflearn.max_pool_1d(net, 4)
-net = tflearn.conv_1d(net, 32, 8, activation='relu', regularizer='L2')
+net = tflearn.conv_1d(net, 32, 8, activation='relu', regularizer='L2', bias=False)
 
-net = tflearn.fully_connected(net, 50)
+net = tflearn.fully_connected(net, 50, bias=False)
 net = tflearn.dropout(net, 0.5)
-net = tflearn.fully_connected(net, n_classes, activation='softmax')
-net = tflearn.regression(net, optimizer='adam', learning_rate=0.0001,
+net = tflearn.fully_connected(net, n_classes, activation='softmax', bias=False)
+net = tflearn.regression(net, optimizer='adam', learning_rate=0.00001,
                          loss='categorical_crossentropy', name='target')
 model = tflearn.DNN(net, tensorboard_verbose=2, checkpoint_path='./log', max_checkpoints=1)
 try:
@@ -53,7 +53,7 @@ try:
 
     model.fit(X, Y, n_epoch=120, show_metric=True, batch_size=80, snapshot_step=30,
               validation_set=(test_X, test_Y)
-              , run_id='16k4plus4-0.0001-all-no-bias{}'.format(1))
+              , run_id='4plus4-all-no-bias{}'.format(1))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')
