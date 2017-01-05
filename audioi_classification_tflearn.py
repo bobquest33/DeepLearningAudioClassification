@@ -13,8 +13,8 @@ train_vocal_dir = './vocal'
 train_non_vocal_dir = './non_vocal'
 
 
-batch_size = 1500
-test_batch_size = 150
+batch_size = 1200
+test_batch_size = 120
 sample_size = 16000
 
 n_classes = 2
@@ -51,9 +51,9 @@ try:
     test_X, test_Y = next(test_batch)
     test_X = np.reshape(test_X, [test_batch_size, sample_size, 1])
 
-    model.fit(X, Y, n_epoch=120, show_metric=True, batch_size=80, snapshot_step=30,
+    model.fit(X, Y, n_epoch=500, show_metric=True, batch_size=150, snapshot_step=30,
               validation_set=(test_X, test_Y)
-              , run_id='16k16plus16-0.0001-all-{}nopool'.format(4))
+              , run_id='you1200batch-16k16plus16-0.0001-all-{}nopool'.format(5))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')

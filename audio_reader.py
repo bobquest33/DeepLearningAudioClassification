@@ -46,23 +46,27 @@ def tag_and_rename_files(vocal_directory, non_vocal_directory):
         os.rename(file, new_file)
 
 
-def load_wav_file(name):
+def load_wav_file(name, use_mfcc=False, sample_rate=16000):
     f = wave.open(name, "rb")
     # print("loading %s"%name)
     chunk = []
     data0 = f.readframes(CHUNK)
     while data0:  # f.getnframes()
-        # data=numpy.fromstring(data0, dtype='float32')
-        # data = numpy.fromstring(data0, dtype='uint16')
         data = np.fromstring(data0, dtype='uint16')
         data = (data + 32768) / 65536.  # 0-1 for Better convergence
-        # chunks.append(data)
         chunk.extend(data)
         data0 = f.readframes(CHUNK)
+    if use_mfcc:
+        chunk = mfcc_wav(chunk, sample_rate)
     # finally trim:
     # chunk.extend(np.zeros(CHUNK * 2 - len(chunk)))  # fill with padding 0's
     # print("%s loaded"%name)
     return chunk
+
+
+def mfcc_wav(sample, sample_rate):
+    mfcc_array = librosa.feature.mfcc(y=sample, sr=sample_rate)
+    return mfcc_array
 
 
 def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=32000, sample_rate=16000):

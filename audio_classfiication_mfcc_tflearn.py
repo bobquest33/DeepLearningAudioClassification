@@ -12,7 +12,6 @@ test_non_vocal_data = os.path.join(test_data, './non_vocal')
 train_vocal_dir = './vocal'
 train_non_vocal_dir = './non_vocal'
 
-
 batch_size = 1400
 test_batch_size = 150
 sample_size = 16000
