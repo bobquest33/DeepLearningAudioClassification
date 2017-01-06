@@ -46,7 +46,7 @@ def tag_and_rename_files(vocal_directory, non_vocal_directory):
         os.rename(file, new_file)
 
 
-def load_wav_file(name, use_mfcc=False, sample_rate=16000):
+def load_wav_file(name, sample_rate=16000):
     f = wave.open(name, "rb")
     # print("loading %s"%name)
     chunk = []
@@ -56,8 +56,6 @@ def load_wav_file(name, use_mfcc=False, sample_rate=16000):
         data = (data + 32768) / 65536.  # 0-1 for Better convergence
         chunk.extend(data)
         data0 = f.readframes(CHUNK)
-    if use_mfcc:
-        chunk = mfcc_wav(chunk, sample_rate)
     # finally trim:
     # chunk.extend(np.zeros(CHUNK * 2 - len(chunk)))  # fill with padding 0's
     # print("%s loaded"%name)
@@ -65,11 +63,15 @@ def load_wav_file(name, use_mfcc=False, sample_rate=16000):
 
 
 def mfcc_wav(sample, sample_rate):
+    sample = np.array(sample)
     mfcc_array = librosa.feature.mfcc(y=sample, sr=sample_rate)
+    mfcc_array = np.array(mfcc_array)
+    mfcc_array = np.transpose(mfcc_array)
     return mfcc_array
 
 
-def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=32000, sample_rate=16000):
+def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=32000, sample_rate=16000,
+                        use_mfcc=False):
     files = find_files(vocal_directory)
     files.extend(find_files(non_vocal_directory))
     batch_waves = []
@@ -84,9 +86,12 @@ def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sam
             label = np.eye(2)[label_eye]
             while len(audio) >= sample_size:
                 waves = audio[:sample_size]
+                if use_mfcc:
+                    waves = mfcc_wav(waves, sample_rate)
                 batch_waves.append(waves)
                 batch_labels.append(label)
                 if len(batch_waves) >= batch_size:
+                    batch_waves = np.array(batch_waves)
                     yield batch_waves, batch_labels
                     batch_waves = []
                     batch_labels = []

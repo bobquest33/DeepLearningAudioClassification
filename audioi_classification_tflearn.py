@@ -34,9 +34,9 @@ net = tflearn.max_pool_1d(net, 4)
 net = tflearn.conv_1d(net, 32, 8, activation='relu', regularizer='L2')
 
 net = tflearn.fully_connected(net, 50)
-net = tflearn.dropout(net, 0.5)
+net = tflearn.dropout(net, 0.3)
 net = tflearn.fully_connected(net, n_classes, activation='softmax')
-net = tflearn.regression(net, optimizer='adam', learning_rate=0.0001,
+net = tflearn.regression(net, optimizer='adam', learning_rate=0.00006,
                          loss='categorical_crossentropy', name='target')
 model = tflearn.DNN(net, tensorboard_verbose=2, checkpoint_path='./log', max_checkpoints=1)
 try:
@@ -53,7 +53,7 @@ try:
 
     model.fit(X, Y, n_epoch=500, show_metric=True, batch_size=150, snapshot_step=30,
               validation_set=(test_X, test_Y)
-              , run_id='you1200batch-16k16plus16-0.0001-all-{}nopool'.format(5))
+              , run_id='you1200batch-16k16plus16-0.00006-all-{}nopool0.3d'.format(3))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')
