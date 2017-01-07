@@ -2,8 +2,9 @@ from time import sleep
 
 import tflearn
 import numpy as np
+from tflearn import local_response_normalization
 from tflearn.layers.merge_ops import merge
-import os
+import os, math
 from audio_reader import wav_batch_generator, random_pick_to_test_dataset, put_back_test_dataset
 
 test_data = './test_data'
@@ -12,27 +13,31 @@ test_non_vocal_data = os.path.join(test_data, './non_vocal')
 train_vocal_dir = './vocal'
 train_non_vocal_dir = './non_vocal'
 
-
 batch_size = 1200
 test_batch_size = 120
 sample_size = 16000
-
+initial_stride_x = (200 / 10.)
+exponent_coeff = initial_stride_x ** (1 / 32)
 n_classes = 2
 
-tflearn.init_graph(num_cores=8, gpu_memory_fraction=0.5)
+tflearn.init_graph(num_cores=4, gpu_memory_fraction=0.5)
 
 inp = tflearn.input_data(shape=[None, sample_size, 1], name='input')
-stride1 = tflearn.conv_1d(inp, 16, 256, 160, activation='relu', regularizer='L2')
-stride1 = tflearn.max_pool_1d(stride1, 2)
 
-stride2 = tflearn.conv_1d(inp, 16, 512, 320, activation='relu', regularizer='L2')
-# stride_pool2 = tflearn.max_pool_1d(stride2, 2)
-stride_out = merge([stride1, stride2], mode='concat', axis=2)
+strides = []
+for i in range(1, 32):
+    x = int(10 * (exponent_coeff ** i))
+    hop = math.ceil(x * 0.25)
+    stride = tflearn.conv_1d(inp, 1, x, strides=20, activation='relu', regularizer='L2', name="Stride{}".format(i))
+    # stride = tflearn.max_pool_1d(stride, math.ceil(200 / hop))
+    print(stride, x, hop)
+    strides.append(stride)
+
+stride_out = merge(strides, mode='concat', axis=2)
 net = tflearn.conv_1d(stride_out, 32, 8, activation='relu', regularizer='L2')
 
 net = tflearn.max_pool_1d(net, 4)
 net = tflearn.conv_1d(net, 32, 8, activation='relu', regularizer='L2')
-
 net = tflearn.fully_connected(net, 50)
 net = tflearn.dropout(net, 0.3)
 net = tflearn.fully_connected(net, n_classes, activation='softmax')
@@ -51,9 +56,9 @@ try:
     test_X, test_Y = next(test_batch)
     test_X = np.reshape(test_X, [test_batch_size, sample_size, 1])
 
-    model.fit(X, Y, n_epoch=500, show_metric=True, batch_size=150, snapshot_step=30,
+    model.fit(X, Y, n_epoch=700, show_metric=True, batch_size=150, snapshot_step=200,
               validation_set=(test_X, test_Y)
-              , run_id='you1200batch-16k16plus16-0.00006-all-{}nopool0.3d'.format(3))
+              , run_id='you-new-merged{}'.format(1))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')
