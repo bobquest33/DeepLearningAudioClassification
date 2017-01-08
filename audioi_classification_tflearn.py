@@ -6,6 +6,8 @@ from tflearn import local_response_normalization
 from tflearn.layers.merge_ops import merge
 import os, math
 from audio_reader import wav_batch_generator, random_pick_to_test_dataset, put_back_test_dataset
+import tensorflow as tf
+import matplotlib.pyplot as plt
 
 test_data = './test_data'
 test_vocal_data = os.path.join(test_data, './vocal')
@@ -20,17 +22,29 @@ initial_stride_x = (200 / 10.)
 exponent_coeff = initial_stride_x ** (1 / 32)
 n_classes = 2
 
+
+def visual_weight(weight):
+    weight = np.reshape(weight, [-1])
+    plt.plot(weight)
+    plt.show()
+
+
 tflearn.init_graph(num_cores=4, gpu_memory_fraction=0.5)
-
 inp = tflearn.input_data(shape=[None, sample_size, 1], name='input')
-
 strides = []
+strides_weight = []
 for i in range(1, 32):
     x = int(10 * (exponent_coeff ** i))
+    times = np.arange(0.0, 1.0, 1 / x)
+    amplitudes = np.sin(times * 2.0 * np.pi)
     hop = math.ceil(x * 0.25)
-    stride = tflearn.conv_1d(inp, 1, x, strides=20, activation='relu', regularizer='L2', name="Stride{}".format(i))
+    if len(amplitudes) > x:
+        amplitudes = amplitudes[:x]
+    init = tf.constant_initializer(amplitudes)
+    stride = tflearn.conv_1d(inp, 1, x, strides=20, activation='relu', regularizer='L2', name="Stride{}".format(i),
+                             bias=False)
     # stride = tflearn.max_pool_1d(stride, math.ceil(200 / hop))
-    print(stride, x, hop)
+    strides_weight.append(stride.W)
     strides.append(stride)
 
 stride_out = merge(strides, mode='concat', axis=2)
@@ -58,7 +72,7 @@ try:
 
     model.fit(X, Y, n_epoch=700, show_metric=True, batch_size=150, snapshot_step=200,
               validation_set=(test_X, test_Y)
-              , run_id='you-new-merged{}'.format(1))
+              , run_id='you-new-merged_no_bias{}'.format(0))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')
