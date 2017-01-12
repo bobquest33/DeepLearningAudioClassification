@@ -9,14 +9,14 @@ from audio_reader import wav_batch_generator, random_pick_to_test_dataset, put_b
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-test_data = './test_data'
+test_data = './mp3/test_data'
 test_vocal_data = os.path.join(test_data, './vocal')
 test_non_vocal_data = os.path.join(test_data, './non_vocal')
-train_vocal_dir = './vocal'
-train_non_vocal_dir = './non_vocal'
+train_vocal_dir = './mp3/vocal'
+train_non_vocal_dir = './mp3/non_vocal'
 
-batch_size = 1200
-test_batch_size = 120
+batch_size = 10000
+test_batch_size = 1000
 sample_size = 16000
 initial_stride_x = (200 / 10.)
 exponent_coeff = initial_stride_x ** (1 / 32)
@@ -40,7 +40,7 @@ for i in range(1, 32):
     hop = math.ceil(x * 0.25)
     if len(amplitudes) > x:
         amplitudes = amplitudes[:x]
-    init = tf.constant_initializer(amplitudes)
+    # init = tf.constant_initializer(amplitudes)
     stride = tflearn.conv_1d(inp, 1, x, strides=20, activation='relu', regularizer='L2', name="Stride{}".format(i),
                              bias=False)
     # stride = tflearn.max_pool_1d(stride, math.ceil(200 / hop))
@@ -70,9 +70,9 @@ try:
     test_X, test_Y = next(test_batch)
     test_X = np.reshape(test_X, [test_batch_size, sample_size, 1])
 
-    model.fit(X, Y, n_epoch=700, show_metric=True, batch_size=150, snapshot_step=200,
+    model.fit(X, Y, n_epoch=500, show_metric=True, batch_size=150, snapshot_step=200,
               validation_set=(test_X, test_Y)
-              , run_id='you-new-merged_no_bias{}'.format(0))
+              , run_id='man-new-merged_no_bias{}'.format(0))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')
