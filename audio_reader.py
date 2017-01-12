@@ -70,38 +70,47 @@ def mfcc_wav(sample, sample_rate):
     return mfcc_array
 
 
-def wav_batch_generator(vocal_directory, non_vocal_directory, batch_size=10, sample_size=32000, sample_rate=16000,
-                        use_mfcc=False):
-    files = find_files(vocal_directory)
-    files.extend(find_files(non_vocal_directory))
-    batch_waves = []
-    batch_labels = []
-    while True:
-        shuffle(files)
-        file_count = 0
-        for filename in files:
-            audio = load_wav_file(filename)
-            filename = os.path.basename(filename)
-            label_eye = 1 if filename[0] == 'n' else 0
-            label = np.eye(2)[label_eye]
-            while len(audio) >= sample_size:
-                waves = audio[:sample_size]
-                if use_mfcc:
-                    waves = mfcc_wav(waves, sample_rate)
-                batch_waves.append(waves)
-                batch_labels.append(label)
-                if len(batch_waves) >= batch_size:
-                    batch_waves = np.array(batch_waves)
-                    yield batch_waves, batch_labels
-                    batch_waves = []
-                    batch_labels = []
-                audio = audio[sample_size:]
-                # librosa.output.write_wav('./test.wav', np.array(audio), sample_rate, norm=True)
-                # print('done')
-                # sleep(1000)
-                print("batch_size: {}".format(len(batch_waves)))
-            print("load {} files.".format(file_count))
-            file_count += 1
+class BatchGenerator:
+    def __init__(self, vocal_directory, non_vocal_directory):
+        self.ended = False
+        self.vocal_directory = vocal_directory
+        self.non_vocal_directory = non_vocal_directory
+        self.files = find_files(self.vocal_directory)
+        self.files.extend(find_files(self.non_vocal_directory))
+        shuffle(self.files)
+
+    def wav_batch_generator(self,batch_size=10, sample_size=32000,
+                            sample_rate=16000,
+                            use_mfcc=False):
+
+        batch_waves = []
+        batch_labels = []
+        while True:
+            file_count = 0
+            for filename in self.files:
+                audio = load_wav_file(filename)
+                filename = os.path.basename(filename)
+                label_eye = 1 if filename[0] == 'n' else 0
+                label = np.eye(2)[label_eye]
+                while len(audio) >= sample_size:
+                    waves = audio[:sample_size]
+                    if use_mfcc:
+                        waves = mfcc_wav(waves, sample_rate)
+                    batch_waves.append(waves)
+                    batch_labels.append(label)
+                    if len(batch_waves) >= batch_size:
+                        batch_waves = np.array(batch_waves)
+                        yield batch_waves, batch_labels
+                        batch_waves = []
+                        batch_labels = []
+                    audio = audio[sample_size:]
+                    # librosa.output.write_wav('./test.wav', np.array(audio), sample_rate, norm=True)
+                    # print('done')
+                    # sleep(1000)
+                    print("batch_size: {}".format(len(batch_waves)))
+                print("load {} files.".format(file_count))
+                file_count += 1
+            self.ended = True
 
 
 def random_pick_to_test_dataset(vocal_directory, non_vocal_directory, test_data_directory):
