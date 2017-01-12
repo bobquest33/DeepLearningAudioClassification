@@ -1,11 +1,12 @@
 from time import sleep
 
+import h5py
 import tflearn
 import numpy as np
 from tflearn import local_response_normalization
 from tflearn.layers.merge_ops import merge
 import os, math
-from audio_reader import wav_batch_generator, random_pick_to_test_dataset, put_back_test_dataset
+# from audio_reader import wav_batch_generator, random_pick_to_test_dataset, put_back_test_dataset
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
@@ -59,20 +60,24 @@ net = tflearn.regression(net, optimizer='adam', learning_rate=0.00006,
                          loss='categorical_crossentropy', name='target')
 model = tflearn.DNN(net, tensorboard_verbose=2, checkpoint_path='./log', max_checkpoints=1)
 try:
-    put_back_test_dataset(test_data, train_vocal_dir, train_non_vocal_dir)
-    random_pick_to_test_dataset(train_vocal_dir, train_non_vocal_dir, test_data)
-    batch = wav_batch_generator(train_vocal_dir, train_non_vocal_dir, sample_size=sample_size, batch_size=batch_size)
-    X, Y = next(batch)
-    X = np.reshape(X, [batch_size, sample_size, 1])
+    # put_back_test_dataset(test_data, train_vocal_dir, train_non_vocal_dir)
+    # random_pick_to_test_dataset(train_vocal_dir, train_non_vocal_dir, test_data)
+    # batch = wav_batch_generator(train_vocal_dir, train_non_vocal_dir, sample_size=sample_size, batch_size=batch_size)
+    h5f = h5py.File('data.h5', 'r')
+    X = h5f['X']
+    Y = h5f['Y']
+    test_X = h5f['X']
+    test_Y = h5f['Y']
+    # X, Y = next(batch)
 
-    test_batch = wav_batch_generator(test_vocal_data, test_non_vocal_data, sample_size=sample_size,
-                                     batch_size=test_batch_size)
-    test_X, test_Y = next(test_batch)
-    test_X = np.reshape(test_X, [test_batch_size, sample_size, 1])
+    # test_batch = wav_batch_generator(test_vocal_data, test_non_vocal_data, sample_size=sample_size,
+    #                                  batch_size=test_batch_size)
+    # test_X, test_Y = next(test_batch)
+    # test_X = np.reshape(test_X, [test_batch_size, sample_size, 1])
 
     model.fit(X, Y, n_epoch=500, show_metric=True, batch_size=150, snapshot_step=200,
               validation_set=(test_X, test_Y)
-              , run_id='man-new-merged_no_bias{}'.format(0))
+              , run_id='man-hadoop{}'.format(1))
     model.save('my_model.tflearn')
 except KeyboardInterrupt:
     model.save('my_model.tflearn')

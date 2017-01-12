@@ -45,6 +45,7 @@ def tag_and_rename_files(vocal_directory, non_vocal_directory):
         file = os.path.join(non_vocal_directory, file)
         os.rename(file, new_file)
 
+# tag_and_rename_files('./mp3/vocal', './mp3/non_vocal')
 
 def load_wav_file(name, sample_rate=16000):
     f = wave.open(name, "rb")
@@ -100,6 +101,7 @@ class BatchGenerator:
                     batch_labels.append(label)
                     if len(batch_waves) >= batch_size:
                         batch_waves = np.array(batch_waves)
+                        batch_labels = np.array(batch_labels)
                         yield batch_waves, batch_labels
                         batch_waves = []
                         batch_labels = []
